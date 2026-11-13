@@ -1,0 +1,3175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grade 7 Science: Structural Engineer Certification Lab</title>
+  <style>
+    /* ==========================================================================
+       1. DESIGN TOKENS & BLUEPRINT STUDIO AESTHETIC (SELF-CONTAINED CSS)
+       ========================================================================== */
+    :root {
+      --navy-950: #081226;
+      --navy-900: #0f172a;
+      --navy-800: #1e293b;
+      --navy-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-300: #cbd5e1;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --paper-bg: #f8fafc;
+      --grid-line: rgba(14, 116, 144, 0.07);
+      --grid-major: rgba(14, 116, 144, 0.14);
+
+      /* Force & Accent Palette */
+      --cyan-600: #0284c7;
+      --cyan-500: #06b6d4;
+      --cyan-100: #e0f2fe;
+      --orange-600: #ea580c;
+      --orange-500: #f97316;
+      --orange-100: #ffedd5;
+      --emerald-600: #059669;
+      --emerald-500: #10b981;
+      --emerald-100: #d1fae5;
+      --amber-500: #f59e0b;
+      --amber-100: #fef3c7;
+      --rose-600: #e11d48;
+      --rose-100: #ffe4e6;
+      --purple-600: #7c3aed;
+      --purple-100: #ede9fe;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 6px 18px rgba(15, 23, 42, 0.09);
+      --shadow-lg: 0 14px 32px rgba(15, 23, 42, 0.14);
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--navy-900);
+      background-color: var(--paper-bg);
+      /* Engineering Blueprint Graph Paper Background */
+      background-image:
+        linear-gradient(to right, var(--grid-major) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-major) 1px, transparent 1px),
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+      background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ==========================================================================
+       2. TOP HEADER & GAMIFIED HUD
+       ========================================================================== */
+    .studio-header {
+      background: linear-gradient(135deg, var(--navy-950) 0%, var(--navy-900) 60%, #162a4a 100%);
+      color: #ffffff;
+      padding: 14px 20px;
+      border-bottom: 3px solid var(--cyan-500);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-md);
+    }
+
+    .header-inner {
+      max-width: 1380px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--orange-500), var(--amber-500));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 20px;
+      color: var(--navy-950);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.2);
+      flex-shrink: 0;
+    }
+
+    .brand-title h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      line-height: 1.2;
+    }
+
+    .brand-title p {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      font-family: var(--font-mono);
+    }
+
+    .hud-stats {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hud-pill {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .xp-val {
+      color: var(--amber-500);
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      padding: 6px 14px;
+    }
+
+    .progress-track {
+      width: 110px;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--cyan-500), var(--emerald-500));
+      transition: width 0.4s ease;
+    }
+
+    .badge-tray {
+      display: flex;
+      gap: 6px;
+    }
+
+    .mini-badge {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: 1px dashed rgba(255,255,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      opacity: 0.4;
+      transition: all 0.3s ease;
+      cursor: help;
+    }
+
+    .mini-badge.earned {
+      opacity: 1;
+      background: linear-gradient(135deg, var(--amber-500), var(--orange-500));
+      border: 1px solid #fff;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+      transform: scale(1.06);
+    }
+
+    /* ==========================================================================
+       3. APP SHELL: SIDEBAR NAVIGATION & MAIN WORKSPACE
+       ========================================================================== */
+    .app-shell {
+      max-width: 1380px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      gap: 22px;
+      flex: 1;
+    }
+
+    @media (max-width: 960px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+        padding: 14px;
+      }
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-self: start;
+      position: sticky;
+      top: 88px;
+    }
+
+    @media (max-width: 960px) {
+      .sidebar {
+        position: static;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+    }
+
+    .nav-card {
+      background: #ffffff;
+      border: 2px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+      font-family: inherit;
+    }
+
+    .nav-card:hover {
+      border-color: var(--cyan-500);
+      transform: translateY(-1px);
+    }
+
+    .nav-card.active {
+      background: var(--navy-900);
+      color: #ffffff;
+      border-color: var(--cyan-500);
+      box-shadow: var(--shadow-md);
+    }
+
+    .nav-card-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--slate-100);
+      color: var(--navy-900);
+      font-weight: 800;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .nav-card.active .nav-num {
+      background: var(--cyan-500);
+      color: var(--navy-950);
+    }
+
+    .nav-meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      line-height: 1.25;
+    }
+
+    .nav-time {
+      font-size: 0.72rem;
+      color: var(--slate-500);
+      font-family: var(--font-mono);
+    }
+
+    .nav-card.active .nav-time {
+      color: #94a3b8;
+    }
+
+    .nav-status {
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .workspace {
+      min-width: 0;
+    }
+
+    .module-panel {
+      display: none;
+      animation: fadeSlide 0.25s ease;
+    }
+
+    .module-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==========================================================================
+       4. REUSABLE UI CARDS, BUTTONS, CALLOUTS & TOASTS
+       ========================================================================== */
+    .card {
+      background: #ffffff;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .module-banner {
+      background: linear-gradient(135deg, var(--navy-900), #1e3a5f);
+      color: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 22px 26px;
+      margin-bottom: 20px;
+      border-left: 6px solid var(--orange-500);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .module-banner h2 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .module-banner p {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      max-width: 720px;
+    }
+
+    .tag-pill {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(6, 182, 212, 0.2);
+      color: #67e8f9;
+      margin-bottom: 6px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 18px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.92rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      font-family: inherit;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--cyan-600);
+      color: #ffffff;
+    }
+    .btn-primary:hover { background: #0369a1; }
+
+    .btn-orange {
+      background: var(--orange-600);
+      color: #ffffff;
+    }
+    .btn-orange:hover { background: #c2410c; }
+
+    .btn-emerald {
+      background: var(--emerald-600);
+      color: #ffffff;
+    }
+    .btn-emerald:hover { background: #047857; }
+
+    .btn-outline {
+      background: #ffffff;
+      color: var(--navy-900);
+      border: 2px solid var(--slate-300);
+    }
+    .btn-outline:hover {
+      border-color: var(--navy-900);
+      background: var(--slate-100);
+    }
+
+    .btn-sm {
+      padding: 7px 12px;
+      font-size: 0.82rem;
+    }
+
+    /* Toast Notification (Replaces alert) */
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--navy-900);
+      color: #ffffff;
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      border-left: 5px solid var(--emerald-500);
+      box-shadow: var(--shadow-lg);
+      font-size: 0.9rem;
+      font-weight: 600;
+      animation: slideInRight 0.25s ease;
+      max-width: 340px;
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ==========================================================================
+       5. MODULE 1: INTERACTIVE FIELD GUIDE & SVG DIAGRAMS
+       ========================================================================== */
+    .guide-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 820px) {
+      .guide-grid { grid-template-columns: 1fr; }
+    }
+
+    .concept-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .concept-item {
+      border: 2px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: var(--paper-bg);
+    }
+
+    .concept-item:hover, .concept-item.active {
+      border-color: var(--cyan-600);
+      background: #f0f9ff;
+    }
+
+    .concept-item h4 {
+      font-size: 0.98rem;
+      color: var(--navy-900);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .concept-item p {
+      font-size: 0.88rem;
+      color: var(--slate-600);
+      margin-top: 4px;
+    }
+
+    .svg-stage {
+      background: var(--navy-950);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      color: #ffffff;
+      text-align: center;
+      border: 2px solid var(--navy-700);
+    }
+
+    .svg-stage svg {
+      width: 100%;
+      max-width: 380px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .svg-caption {
+      margin-top: 10px;
+      font-size: 0.86rem;
+      color: #cbd5e1;
+      background: rgba(255,255,255,0.07);
+      padding: 10px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Quick Check Box */
+    .quick-check {
+      background: #f8fafc;
+      border: 2px solid var(--cyan-600);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-top: 18px;
+    }
+
+    .quick-check h4 {
+      color: var(--cyan-600);
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .qc-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .qc-btn {
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      border: 2px solid var(--slate-300);
+      background: #ffffff;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.86rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .qc-btn:hover { border-color: var(--cyan-600); }
+    .qc-btn.correct { background: var(--emerald-100); border-color: var(--emerald-600); color: #065f46; }
+    .qc-btn.wrong { background: var(--rose-100); border-color: var(--rose-600); color: #9f1239; }
+
+    /* ==========================================================================
+       6. MODULE 2: STRUCTURAL FORCE LAB (HTML5 CANVAS SIMULATOR)
+       ========================================================================== */
+    .sim-layout {
+      display: grid;
+      grid-template-columns: 1fr 330px;
+      gap: 20px;
+    }
+
+    @media (max-width: 960px) {
+      .sim-layout { grid-template-columns: 1fr; }
+    }
+
+    .canvas-wrapper {
+      background: var(--navy-950);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      border: 2px solid var(--navy-700);
+      position: relative;
+    }
+
+    #bridgeCanvas {
+      width: 100%;
+      height: 360px;
+      display: block;
+      border-radius: var(--radius-sm);
+      background: #0b162c;
+    }
+
+    .sim-controls {
+      background: #ffffff;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .control-group label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--navy-800);
+    }
+
+    .control-group input[type="range"] {
+      width: 100%;
+      accent-color: var(--cyan-600);
+      cursor: pointer;
+    }
+
+    .mat-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .mat-btn {
+      padding: 8px 6px;
+      border: 2px solid var(--slate-300);
+      background: var(--slate-100);
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    .mat-btn.active {
+      background: var(--navy-900);
+      color: #ffffff;
+      border-color: var(--cyan-500);
+    }
+
+    .integrity-meter {
+      background: var(--slate-100);
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--slate-300);
+    }
+
+    .meter-bar {
+      height: 14px;
+      background: var(--slate-200);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 6px 0;
+    }
+
+    .meter-fill {
+      height: 100%;
+      width: 20%;
+      background: var(--emerald-500);
+      transition: width 0.2s ease, background 0.2s ease;
+    }
+
+    .challenges-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .challenge-card {
+      border: 2px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      background: var(--paper-bg);
+    }
+
+    .challenge-card.passed {
+      border-color: var(--emerald-600);
+      background: var(--emerald-100);
+    }
+
+    /* ==========================================================================
+       7. MODULE 3: FORCE SORTER & SCENARIO ARCADE
+       ========================================================================== */
+    .arcade-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .sorter-card-stage {
+      background: linear-gradient(135deg, var(--navy-900), var(--navy-800));
+      color: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 28px 20px;
+      text-align: center;
+      margin: 14px 0;
+      min-height: 170px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+    }
+
+    .sorter-bins {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .bin-btn {
+      padding: 16px;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--slate-300);
+      background: #ffffff;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .bin-btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--cyan-600);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ==========================================================================
+       8. MODULE 4: ENGINEERING CASE STUDIES
+       ========================================================================== */
+    .case-tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .case-tab {
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--slate-300);
+      background: #ffffff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .case-tab.active {
+      background: var(--navy-900);
+      color: #ffffff;
+      border-color: var(--orange-500);
+    }
+
+    .case-tab.locked {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .case-hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 800px) {
+      .case-hero { grid-template-columns: 1fr; }
+    }
+
+    /* ==========================================================================
+       9. MODULE 5: CROSSWORD PUZZLE & FILL-IN-THE-BLANK REPORT
+       ========================================================================== */
+    .crossword-layout {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 860px) {
+      .crossword-layout { grid-template-columns: 1fr; }
+    }
+
+    .cw-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 32px);
+      grid-template-rows: repeat(12, 32px);
+      gap: 2px;
+      background: var(--navy-900);
+      padding: 6px;
+      border-radius: var(--radius-sm);
+      width: fit-content;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 440px) {
+      .cw-grid {
+        grid-template-columns: repeat(12, 24px);
+        grid-template-rows: repeat(12, 24px);
+      }
+    }
+
+    .cw-cell {
+      position: relative;
+      background: var(--navy-950);
+    }
+
+    .cw-cell.active-cell {
+      background: #ffffff;
+    }
+
+    .cw-cell.highlighted {
+      background: var(--cyan-100);
+    }
+
+    .cw-num {
+      position: absolute;
+      top: 1px;
+      left: 2px;
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--navy-700);
+      pointer-events: none;
+    }
+
+    .cw-input {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+      text-align: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      color: var(--navy-950);
+      font-family: var(--font-mono);
+      outline: none;
+    }
+
+    .cw-input.correct-letter {
+      color: var(--emerald-600);
+      background: var(--emerald-100);
+    }
+
+    .cw-input.wrong-letter {
+      color: var(--rose-600);
+      background: var(--rose-100);
+    }
+
+    .clues-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      font-size: 0.86rem;
+    }
+
+    @media (max-width: 560px) {
+      .clues-box { grid-template-columns: 1fr; }
+    }
+
+    .clue-list li {
+      list-style: none;
+      padding: 5px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 4px;
+    }
+
+    .clue-list li:hover, .clue-list li.selected-clue {
+      background: var(--cyan-100);
+      font-weight: 700;
+    }
+
+    .report-paragraph {
+      background: var(--paper-bg);
+      border: 2px dashed var(--slate-300);
+      padding: 18px;
+      border-radius: var(--radius-md);
+      line-height: 2.1;
+      font-size: 0.98rem;
+    }
+
+    .blank-select {
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 2px solid var(--cyan-600);
+      font-weight: 700;
+      background: #ffffff;
+      color: var(--navy-900);
+      font-family: inherit;
+    }
+
+    /* ==========================================================================
+       10. MODULE 6: FINAL EXAM & PRINTABLE CERTIFICATE
+       ========================================================================== */
+    .certificate-frame {
+      border: 10px double var(--navy-900);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      padding: 34px 28px;
+      border-radius: var(--radius-md);
+      text-align: center;
+      position: relative;
+      box-shadow: var(--shadow-lg);
+      margin-top: 20px;
+    }
+
+    .cert-seal {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--amber-500), var(--orange-600));
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+      margin: 0 auto 12px;
+      border: 4px solid var(--navy-900);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .cert-name-display {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--navy-900);
+      border-bottom: 2px solid var(--navy-900);
+      display: inline-block;
+      padding: 0 24px 4px;
+      margin: 10px 0;
+    }
+
+    .cert-stats {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin: 18px 0;
+    }
+
+    .cert-stat-box {
+      background: var(--slate-100);
+      border: 1px solid var(--slate-300);
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+    }
+
+    /* Footer */
+    .studio-footer {
+      background: var(--navy-950);
+      color: #94a3b8;
+      padding: 16px 20px;
+      font-size: 0.82rem;
+      margin-top: 30px;
+    }
+
+    .footer-inner {
+      max-width: 1380px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Print Styling for Certificate */
+    @media print {
+      body * { visibility: hidden; }
+      #certificateArea, #certificateArea * { visibility: visible; }
+      #certificateArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        box-shadow: none;
+      }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       HEADER & GAMIFIED ENGINEER HUD
+       ======================================================================== -->
+  <header class="studio-header">
+    <div class="header-inner">
+      <div class="brand-group">
+        <div class="brand-badge">SE</div>
+        <div class="brand-title">
+          <h1>Grade 7 Structural Engineering Lab</h1>
+          <p>UNIT: STRUCTURES &amp; MECHANISMS // FORCES &amp; LOADS</p>
+        </div>
+      </div>
+
+      <div class="hud-stats">
+        <div class="hud-pill" title="Experience Points Earned">
+          <span>⚡ XP:</span>
+          <span class="xp-val" id="hudXp">0</span>
+        </div>
+
+        <div class="progress-wrap" title="Overall Certification Progress">
+          <span style="font-size:0.8rem;font-weight:700;">Progress</span>
+          <div class="progress-track">
+            <div class="progress-fill" id="hudProgressFill"></div>
+          </div>
+          <span id="hudProgressPct" style="font-family:var(--font-mono);font-size:0.8rem;">0%</span>
+        </div>
+
+        <div class="hud-pill" title="Active Study Timer">
+          <span>⏱️</span>
+          <span id="hudTimer" style="font-family:var(--font-mono);">00:00</span>
+        </div>
+
+        <div class="badge-tray" id="badgeTray">
+          <div class="mini-badge" id="badge-1" title="Badge 1: Field Guide Scholar">📘</div>
+          <div class="mini-badge" id="badge-2" title="Badge 2: Bridge Simulator Pro">🌉</div>
+          <div class="mini-badge" id="badge-3" title="Badge 3: Force Arcade Champion">🎮</div>
+          <div class="mini-badge" id="badge-4" title="Badge 4: Case Study Investigator">🔍</div>
+          <div class="mini-badge" id="badge-5" title="Badge 5: Blueprint Lexicon Master">🧩</div>
+          <div class="mini-badge" id="badge-6" title="Badge 6: Certified Junior Structural Engineer">🏆</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       MAIN WORKSPACE SHELL
+       ======================================================================== -->
+  <div class="app-shell">
+    <!-- Left Sidebar Navigation -->
+    <nav class="sidebar" aria-label="Course Modules">
+      <button class="nav-card active" data-mod="1" onclick="switchModule(1)">
+        <div class="nav-card-left">
+          <span class="nav-num">1</span>
+          <div class="nav-meta">
+            <span class="nav-title">Interactive Field Guide</span>
+            <span class="nav-time">~10 mins • Readings &amp; SVG</span>
+          </div>
+        </div>
+        <span class="nav-status" id="status-1">⭕</span>
+      </button>
+
+      <button class="nav-card" data-mod="2" onclick="switchModule(2)">
+        <div class="nav-card-left">
+          <span class="nav-num">2</span>
+          <div class="nav-meta">
+            <span class="nav-title">Structural Force Lab</span>
+            <span class="nav-time">~10 mins • Beam Simulator</span>
+          </div>
+        </div>
+        <span class="nav-status" id="status-2">⭕</span>
+      </button>
+
+      <button class="nav-card" data-mod="3" onclick="switchModule(3)">
+        <div class="nav-card-left">
+          <span class="nav-num">3</span>
+          <div class="nav-meta">
+            <span class="nav-title">Force Sorter Arcade</span>
+            <span class="nav-time">~7 mins • 2 Mini-Games</span>
+          </div>
+        </div>
+        <span class="nav-status" id="status-3">⭕</span>
+      </button>
+
+      <button class="nav-card" data-mod="4" onclick="switchModule(4)">
+        <div class="nav-card-left">
+          <span class="nav-num">4</span>
+          <div class="nav-meta">
+            <span class="nav-title">Engineering Case Studies</span>
+            <span class="nav-time">~8 mins • Real Structures</span>
+          </div>
+        </div>
+        <span class="nav-status" id="status-4">⭕</span>
+      </button>
+
+      <button class="nav-card" data-mod="5" onclick="switchModule(5)">
+        <div class="nav-card-left">
+          <span class="nav-num">5</span>
+          <div class="nav-meta">
+            <span class="nav-title">Word Lab &amp; Crossword</span>
+            <span class="nav-time">~6 mins • Vocab &amp; Report</span>
+          </div>
+        </div>
+        <span class="nav-status" id="status-5">⭕</span>
+      </button>
+
+      <button class="nav-card" data-mod="6" onclick="switchModule(6)">
+        <div class="nav-card-left">
+          <span class="nav-num">6</span>
+          <div class="nav-meta">
+            <span class="nav-title">Certification Exam</span>
+            <span class="nav-time">~5 mins • Final Certificate</span>
+          </div>
+        </div>
+        <span class="nav-status" id="status-6">⭕</span>
+      </button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="workspace">
+
+      <!-- ====================================================================
+           MODULE 1: INTERACTIVE FIELD GUIDE
+           ==================================================================== -->
+      <section class="module-panel active" id="module-1">
+        <div class="module-banner">
+          <div>
+            <span class="tag-pill">Module 01 // Core Theory</span>
+            <h2>Interactive Structural Field Guide</h2>
+            <p>Click through each engineering concept to inspect live vector diagrams, then answer the 3 Quick Check questions to earn your Field Guide Scholar badge.</p>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:0.85rem;background:rgba(0,0,0,0.3);padding:10px 14px;border-radius:10px;">
+            Quick Checks: <strong id="m1ScoreText">0 / 3</strong> Solved
+          </div>
+        </div>
+
+        <!-- SECTION 1A: EXTERNAL FORCES -->
+        <div class="card">
+          <h3>Part A: External Forces &amp; How We Describe Them</h3>
+          <p style="color:var(--slate-600);margin-top:4px;">An <strong>external force</strong> acts on a structure from the outside. Engineers classify external forces by <em>what</em> causes them and <em>how</em> they hit the structure.</p>
+
+          <div class="guide-grid" style="margin-top:14px;">
+            <div class="concept-list" id="extConceptList">
+              <div class="concept-item active" onclick="selectDiagram('ext', 'gravity', this)">
+                <h4>1. Gravity (Non-Contact Force) <span>⬇️</span></h4>
+                <p>The downward pull of Earth on all mass. It acts constantly on every part of a structure, pulling it toward Earth's center.</p>
+              </div>
+              <div class="concept-item" onclick="selectDiagram('ext', 'wind_seismic', this)">
+                <h4>2. Wind &amp; Seismic (Earthquake) Forces <span>💨</span></h4>
+                <p>Moving air pushes horizontally against walls and roofs, while earthquakes shake the ground beneath foundations back and forth.</p>
+              </div>
+              <div class="concept-item" onclick="selectDiagram('ext', 'magnitude_dir', this)">
+                <h4>3. Magnitude &amp; Direction <span>📏</span></h4>
+                <p><strong>Magnitude</strong> is the size/strength of a force (measured in Newtons, N). <strong>Direction</strong> is which way it pushes or pulls (shown by arrow orientation).</p>
+              </div>
+              <div class="concept-item" onclick="selectDiagram('ext', 'point_plane', this)">
+                <h4>4. Point &amp; Plane of Application <span>🎯</span></h4>
+                <p><strong>Point of application</strong> is the exact spot where a force hits. <strong>Plane of application</strong> is the flat surface/angle (e.g., 90° side vs. top) receiving the force.</p>
+              </div>
+            </div>
+
+            <div class="svg-stage">
+              <div id="svgExtContainer"></div>
+              <div class="svg-caption" id="svgExtCaption">
+                <strong>Gravity:</strong> Always pulls straight downward toward Earth's center of mass.
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Check 1 -->
+          <div class="quick-check">
+            <h4>✅ Quick Check 1A: Point &amp; Plane of Application</h4>
+            <p style="font-size:0.9rem;">A tall bookcase is much easier to tip over if you push near the <strong>top shelf</strong> rather than near the <strong>bottom shelf</strong>, even with the exact same force. Which factor changed?</p>
+            <div class="qc-options" id="qc-1">
+              <button class="qc-btn" onclick="answerQC(1, 0, false, this)">The magnitude of gravity</button>
+              <button class="qc-btn" onclick="answerQC(1, 1, true, this)">The point of application</button>
+              <button class="qc-btn" onclick="answerQC(1, 2, false, this)">The dead load of the air</button>
+            </div>
+            <p id="qc-fb-1" style="margin-top:8px;font-size:0.85rem;font-weight:600;"></p>
+          </div>
+        </div>
+
+        <!-- SECTION 1B: TYPES OF LOADS -->
+        <div class="card">
+          <h3>Part B: Types of Loads on a Structure</h3>
+          <p style="color:var(--slate-600);margin-top:4px;">A <strong>load</strong> is any external force acting on a structure. Engineers divide loads into three categories:</p>
+
+          <div class="guide-grid" style="margin-top:14px;">
+            <div class="concept-list" id="loadConceptList">
+              <div class="concept-item active" onclick="selectDiagram('load', 'dead', this)">
+                <h4>1. Dead Load (Static Load) <span>🧱</span></h4>
+                <p>The permanent weight of the structure itself—beams, concrete, roof shingles, bricks, and permanently attached pipes. It never moves.</p>
+              </div>
+              <div class="concept-item" onclick="selectDiagram('load', 'live', this)">
+                <h4>2. Live Load (Dynamic Load) <span>🚛</span></h4>
+                <p>Temporary or moving weight that a structure supports—people, furniture, parked or moving cars, books, and cargo.</p>
+              </div>
+              <div class="concept-item" onclick="selectDiagram('load', 'env', this)">
+                <h4>3. Environmental Load <span>❄️</span></h4>
+                <p>Forces caused by weather and nature—heavy snow accumulation on a roof, strong wind gusts, freezing rain/ice, or seismic tremors.</p>
+              </div>
+            </div>
+
+            <div class="svg-stage">
+              <div id="svgLoadContainer"></div>
+              <div class="svg-caption" id="svgLoadCaption">
+                <strong>Dead Load:</strong> The steel girders, concrete deck, and cables of the bridge itself.
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Check 2 -->
+          <div class="quick-check">
+            <h4>✅ Quick Check 1B: Classifying Loads</h4>
+            <p style="font-size:0.9rem;">During a January ice storm in Ontario, 40 cm of wet snow piles onto a school gymnasium roof while 200 students watch a basketball game inside. What is the <strong>snow</strong> classified as?</p>
+            <div class="qc-options" id="qc-2">
+              <button class="qc-btn" onclick="answerQC(2, 0, false, this)">Dead Load</button>
+              <button class="qc-btn" onclick="answerQC(2, 1, false, this)">Live Load</button>
+              <button class="qc-btn" onclick="answerQC(2, 2, true, this)">Environmental Load</button>
+            </div>
+            <p id="qc-fb-2" style="margin-top:8px;font-size:0.85rem;font-weight:600;"></p>
+          </div>
+        </div>
+
+        <!-- SECTION 1C: INTERNAL FORCES -->
+        <div class="card">
+          <h3>Part C: The Four Internal Forces</h3>
+          <p style="color:var(--slate-600);margin-top:4px;">When external loads push or pull on a structure, they create <strong>internal forces</strong> inside the building materials themselves.</p>
+
+          <div class="guide-grid" style="margin-top:14px;">
+            <div class="concept-list" id="intConceptList">
+              <div class="concept-item active" onclick="selectDiagram('int', 'tension', this)">
+                <h4>1. Tension (Pulling / Stretching) <span>↔️</span></h4>
+                <p>An internal force that pulls particles of a material apart, stretching it. Example: Suspension bridge cables or a guitar string.</p>
+              </div>
+              <div class="concept-item" onclick="selectDiagram('int', 'compression', this)">
+                <h4>2. Compression (Pushing / Squeezing) <span>➡️⬅️</span></h4>
+                <p>An internal force that presses or squeezes particles together. Example: Stone pillars supporting a temple or chair legs under you.</p>
+              </div>
+              <div class="concept-item" onclick="selectDiagram('int', 'shear', this)">
+                <h4>3. Shear (Sliding / Tearing) <span>✂️</span></h4>
+                <p>Forces acting in opposite parallel directions, causing layers of material to slide past each other or snap. Example: Scissors cutting paper or bolts shearing.</p>
+              </div>
+              <div class="concept-item" onclick="selectDiagram('int', 'torsion', this)">
+                <h4>4. Torsion (Twisting) <span>🔄</span></h4>
+                <p>An internal twisting force created when opposite ends of a structure rotate in different directions. Example: Wringing a wet cloth or wind twisting a bridge.</p>
+              </div>
+            </div>
+
+            <div class="svg-stage">
+              <div id="svgIntContainer"></div>
+              <div class="svg-caption" id="svgIntCaption">
+                <strong>Tension:</strong> Particles are pulled apart along the length of the cable.
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Check 3 -->
+          <div class="quick-check">
+            <h4>✅ Quick Check 1C: Bending Beams &amp; Internal Forces</h4>
+            <p style="font-size:0.9rem;">When a heavy truck drives across the middle of a wooden plank bridge, the plank bends downward into a "U" curve. The top surface is squeezed together while the bottom surface stretches apart. Which pair of internal forces is acting?</p>
+            <div class="qc-options" id="qc-3">
+              <button class="qc-btn" onclick="answerQC(3, 0, true, this)">Compression on top, Tension on bottom</button>
+              <button class="qc-btn" onclick="answerQC(3, 1, false, this)">Torsion on top, Gravity on bottom</button>
+              <button class="qc-btn" onclick="answerQC(3, 2, false, this)">Tension on top, Compression on bottom</button>
+            </div>
+            <p id="qc-fb-3" style="margin-top:8px;font-size:0.85rem;font-weight:600;"></p>
+          </div>
+
+          <div style="margin-top:18px;display:flex;justify-content:flex-end;">
+            <button class="btn btn-primary" onclick="switchModule(2)">Next: Enter Structural Force Lab →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           MODULE 2: STRUCTURAL FORCE LAB (INTERACTIVE SIMULATOR)
+           ==================================================================== -->
+      <section class="module-panel" id="module-2">
+        <div class="module-banner">
+          <div>
+            <span class="tag-pill">Module 02 // Physics Sandbox</span>
+            <h2>Structural Beam &amp; Bridge Force Lab</h2>
+            <p>Adjust Dead, Live, and Environmental loads to see real-time beam deflection, internal stress vectors, and structural failure limits. Complete all 3 Lab Challenges below!</p>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:0.85rem;background:rgba(0,0,0,0.3);padding:10px 14px;border-radius:10px;">
+            Challenges Verified: <strong id="m2ScoreText">0 / 3</strong>
+          </div>
+        </div>
+
+        <div class="sim-layout">
+          <div>
+            <div class="canvas-wrapper">
+              <canvas id="bridgeCanvas"></canvas>
+            </div>
+
+            <!-- Vector Legend -->
+            <div class="card" style="margin-top:14px;padding:14px;">
+              <div style="display:flex;flex-wrap:wrap;gap:14px;font-size:0.82rem;font-weight:700;align-items:center;">
+                <span>VECTOR KEY:</span>
+                <span style="color:#f97316;">➡️⬅️ Compression (Top Squeeze)</span>
+                <span style="color:#38bdf8;">⬅️➡️ Tension (Bottom Stretch)</span>
+                <span style="color:#facc15;">⬆️⬇️ Shear (Support Slice)</span>
+                <span style="color:#c084fc;">🔄 Torsion (Wind Twist)</span>
+              </div>
+              <p id="simStatusLog" style="margin-top:8px;font-size:0.88rem;color:var(--navy-800);font-weight:600;">
+                Status: Beam stable. Adjust sliders on the right to apply loads.
+              </p>
+            </div>
+          </div>
+
+          <!-- Controls Sidebar -->
+          <div class="sim-controls">
+            <div class="integrity-meter">
+              <div style="display:flex;justify-content:space-between;font-size:0.85rem;font-weight:800;">
+                <span>STRUCTURAL STRESS</span>
+                <span id="stressPctLabel">18%</span>
+              </div>
+              <div class="meter-bar">
+                <div class="meter-fill" id="stressMeterFill"></div>
+              </div>
+              <div style="font-size:0.76rem;color:var(--slate-600);" id="safetyNote">
+                Safe Operating Zone (&lt; 70% stress)
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label>1. Dead Load: Beam Material</label>
+              <div class="mat-selector">
+                <button class="mat-btn active" id="mat-wood" onclick="setSimMaterial('wood')">Timber</button>
+                <button class="mat-btn" id="mat-concrete" onclick="setSimMaterial('concrete')">Concrete</button>
+                <button class="mat-btn" id="mat-steel" onclick="setSimMaterial('steel')">Steel Truss</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label>
+                <span>2. Live Load: Heavy Trucks</span>
+                <span id="valTrucks">1 Truck</span>
+              </label>
+              <input type="range" id="sliderTrucks" min="0" max="5" value="1" oninput="updateSimParams()" />
+            </div>
+
+            <div class="control-group">
+              <label>
+                <span>Live Load Position (Point of App.)</span>
+                <span id="valPos">50% (Center)</span>
+              </label>
+              <input type="range" id="sliderPos" min="15" max="85" value="50" oninput="updateSimParams()" />
+            </div>
+
+            <div class="control-group">
+              <label>
+                <span>3. Env. Load: Snow Depth</span>
+                <span id="valSnow">0 cm</span>
+              </label>
+              <input type="range" id="sliderSnow" min="0" max="100" value="0" oninput="updateSimParams()" />
+            </div>
+
+            <div class="control-group">
+              <label>
+                <span>Env. Load: Crosswind Gusts</span>
+                <span id="valWind">10 km/h</span>
+              </label>
+              <input type="range" id="sliderWind" min="0" max="140" value="10" oninput="updateSimParams()" />
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;">
+              <button class="btn btn-orange btn-sm" onclick="triggerEarthquake()">🌋 Seismic Pulse</button>
+              <button class="btn btn-outline btn-sm" onclick="resetSim()">🔄 Repair / Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lab Challenges -->
+        <div class="card" style="margin-top:18px;">
+          <h3>🧪 Engineering Lab Challenges (Verify in Simulator)</h3>
+          <p style="font-size:0.9rem;color:var(--slate-600);">Configure the simulator to match each scenario, then click <strong>Verify Test</strong> while the structure is standing!</p>
+
+          <div class="challenges-grid">
+            <div class="challenge-card" id="chal-card-1">
+              <span class="tag-pill" style="background:var(--cyan-100);color:var(--cyan-600);">Challenge 1</span>
+              <h4 style="margin:4px 0;">Blizzard Highway Test</h4>
+              <p style="font-size:0.84rem;color:var(--slate-600);margin-bottom:10px;">Support at least <strong>3 Trucks</strong> AND <strong>60+ cm of Snow</strong> while keeping Structural Stress <strong>below 70%</strong>.</p>
+              <button class="btn btn-primary btn-sm" id="chal-btn-1" onclick="verifyLabChallenge(1)">Verify Test (+50 XP)</button>
+            </div>
+
+            <div class="challenge-card" id="chal-card-2">
+              <span class="tag-pill" style="background:var(--orange-100);color:var(--orange-600);">Challenge 2</span>
+              <h4 style="margin:4px 0;">Hurricane Torsion Test</h4>
+              <p style="font-size:0.84rem;color:var(--slate-600);margin-bottom:10px;">Survive <strong>120+ km/h Crosswinds</strong> with at least <strong>2 Trucks</strong> on the bridge without collapsing (&lt; 95% stress).</p>
+              <button class="btn btn-primary btn-sm" id="chal-btn-2" onclick="verifyLabChallenge(2)">Verify Test (+50 XP)</button>
+            </div>
+
+            <div class="challenge-card" id="chal-card-3">
+              <span class="tag-pill" style="background:var(--purple-100);color:var(--purple-600);">Challenge 3</span>
+              <h4 style="margin:4px 0;">Point of Application Shift</h4>
+              <p style="font-size:0.84rem;color:var(--slate-600);margin-bottom:10px;">Use <strong>Timber</strong> with <strong>3 Trucks</strong>, and move the Live Load near a support (<strong>Position ≤ 22% or ≥ 78%</strong>) so it survives (&lt; 85% stress)!</p>
+              <button class="btn btn-primary btn-sm" id="chal-btn-3" onclick="verifyLabChallenge(3)">Verify Test (+50 XP)</button>
+            </div>
+          </div>
+
+          <div style="margin-top:18px;display:flex;justify-content:flex-end;">
+            <button class="btn btn-primary" onclick="switchModule(3)">Next: Force Sorter Arcade →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           MODULE 3: FORCE SORTER & SCENARIO ARCADE
+           ==================================================================== -->
+      <section class="module-panel" id="module-3">
+        <div class="module-banner">
+          <div>
+            <span class="tag-pill">Module 03 // Skill Drills</span>
+            <h2>Force Sorter &amp; Scenario Arcade</h2>
+            <p>Play both interactive sorting games! Score at least <strong>7 out of 10</strong> on Game A and <strong>6 out of 8</strong> on Game B to unlock your Arcade Champion badge.</p>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:0.85rem;background:rgba(0,0,0,0.3);padding:10px 14px;border-radius:10px;">
+            Game A: <strong id="m3ScoreA">0/10</strong> | Game B: <strong id="m3ScoreB">0/8</strong>
+          </div>
+        </div>
+
+        <div class="arcade-tabs">
+          <button class="btn btn-primary" id="tabGameA" onclick="switchArcadeGame('A')">🎮 Game A: Load Classifier Blitz</button>
+          <button class="btn btn-outline" id="tabGameB" onclick="switchArcadeGame('B')">🕵️ Game B: Internal Force Detective</button>
+        </div>
+
+        <!-- GAME A: LOAD CLASSIFIER BLITZ -->
+        <div class="card" id="gameAPanel">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+            <h3>Game A: Load Classifier Blitz</h3>
+            <span style="font-family:var(--font-mono);font-weight:700;color:var(--orange-600);" id="gameAStreak">Streak: 0 🔥</span>
+          </div>
+          <p style="font-size:0.9rem;color:var(--slate-600);">Classify each real-world item or event as a <strong>Dead Load</strong>, <strong>Live Load</strong>, or <strong>Environmental Load</strong>.</p>
+
+          <div class="sorter-card-stage" id="gameAStage">
+            <span style="font-size:0.8rem;color:#94a3b8;font-family:var(--font-mono);" id="gameACounter">ITEM 1 OF 10</span>
+            <div style="font-size:2.4rem;margin:8px 0;" id="gameAEmoji">🎹</div>
+            <h3 style="font-size:1.3rem;max-width:520px;" id="gameAPrompt">A grand piano sitting in a 2nd-floor music room</h3>
+          </div>
+
+          <div class="sorter-bins" id="gameABins">
+            <button class="bin-btn" onclick="submitGameA('dead')">
+              <span style="font-size:1.5rem;">🧱</span>
+              <span>DEAD LOAD</span>
+              <span style="font-size:0.75rem;color:var(--slate-500);font-weight:500;">Permanent structure weight</span>
+            </button>
+            <button class="bin-btn" onclick="submitGameA('live')">
+              <span style="font-size:1.5rem;">🚛</span>
+              <span>LIVE LOAD</span>
+              <span style="font-size:0.75rem;color:var(--slate-500);font-weight:500;">Movable / changing weight</span>
+            </button>
+            <button class="bin-btn" onclick="submitGameA('env')">
+              <span style="font-size:1.5rem;">⛈️</span>
+              <span>ENVIRONMENTAL LOAD</span>
+              <span style="font-size:0.75rem;color:var(--slate-500);font-weight:500;">Weather &amp; natural forces</span>
+            </button>
+          </div>
+
+          <div id="gameAFeedback" style="margin-top:14px;padding:12px;border-radius:8px;font-weight:600;display:none;"></div>
+        </div>
+
+        <!-- GAME B: INTERNAL FORCE DETECTIVE -->
+        <div class="card" id="gameBPanel" style="display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+            <h3>Game B: Internal Force Detective</h3>
+            <span style="font-family:var(--font-mono);font-weight:700;color:var(--cyan-600);" id="gameBCounter">CASE 1 OF 8</span>
+          </div>
+          <p style="font-size:0.9rem;color:var(--slate-600);">Examine each everyday action and identify the primary internal force at work.</p>
+
+          <div class="sorter-card-stage" id="gameBStage">
+            <div style="font-size:2.6rem;margin-bottom:8px;" id="gameBEmoji">🧺</div>
+            <h3 style="font-size:1.3rem;max-width:540px;" id="gameBPrompt">Wringing water out of a soaked beach towel with both hands</h3>
+          </div>
+
+          <div class="sorter-bins" style="grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));">
+            <button class="bin-btn" onclick="submitGameB('tension')">
+              <span>↔️ TENSION</span>
+              <span style="font-size:0.75rem;color:var(--slate-500);">Pulling / Stretching</span>
+            </button>
+            <button class="bin-btn" onclick="submitGameB('compression')">
+              <span>➡️⬅️ COMPRESSION</span>
+              <span style="font-size:0.75rem;color:var(--slate-500);">Pushing / Squeezing</span>
+            </button>
+            <button class="bin-btn" onclick="submitGameB('shear')">
+              <span>✂️ SHEAR</span>
+              <span style="font-size:0.75rem;color:var(--slate-500);">Sliding / Slicing</span>
+            </button>
+            <button class="bin-btn" onclick="submitGameB('torsion')">
+              <span>🔄 TORSION</span>
+              <span style="font-size:0.75rem;color:var(--slate-500);">Twisting</span>
+            </button>
+          </div>
+
+          <div id="gameBFeedback" style="margin-top:14px;padding:12px;border-radius:8px;font-weight:600;display:none;"></div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;">
+          <button class="btn btn-primary" onclick="switchModule(4)">Next: Engineering Case Studies →</button>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           MODULE 4: ENGINEERING CASE STUDIES
+           ==================================================================== -->
+      <section class="module-panel" id="module-4">
+        <div class="module-banner">
+          <div>
+            <span class="tag-pill">Module 04 // Real-World Forensics</span>
+            <h2>Engineering Case Studies</h2>
+            <p>Investigate 3 famous real-world structures. Answer the 3 forensic analysis questions for each case to unlock the next investigation.</p>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:0.85rem;background:rgba(0,0,0,0.3);padding:10px 14px;border-radius:10px;">
+            Cases Solved: <strong id="m4ScoreText">0 / 3</strong>
+          </div>
+        </div>
+
+        <div class="case-tabs">
+          <button class="case-tab active" id="caseTab-0" onclick="selectCaseStudy(0)">🌉 Case 1: Tacoma Narrows (1940)</button>
+          <button class="case-tab locked" id="caseTab-1" onclick="selectCaseStudy(1)">🔒 Case 2: Citigroup Center (1978)</button>
+          <button class="case-tab locked" id="caseTab-2" onclick="selectCaseStudy(2)">🔒 Case 3: The CN Tower (Toronto)</button>
+        </div>
+
+        <div class="card" id="caseStudyBody">
+          <!-- Populated dynamically by JS -->
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;">
+          <button class="btn btn-primary" onclick="switchModule(5)">Next: Word Lab &amp; Crossword →</button>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           MODULE 5: WORD LAB & CROSSWORD PUZZLE
+           ==================================================================== -->
+      <section class="module-panel" id="module-5">
+        <div class="module-banner">
+          <div>
+            <span class="tag-pill">Module 05 // Scientific Literacy</span>
+            <h2>Blueprint Word Lab &amp; Crossword</h2>
+            <p>Master Grade 7 structural engineering vocabulary by solving the interactive crossword puzzle and completing the Chief Engineer's River Footbridge Report.</p>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:0.85rem;background:rgba(0,0,0,0.3);padding:10px 14px;border-radius:10px;">
+            Tasks Complete: <strong id="m5ScoreText">0 / 2</strong>
+          </div>
+        </div>
+
+        <!-- Part A: Crossword -->
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+            <div>
+              <h3>Part A: Structural Engineering Crossword</h3>
+              <p style="font-size:0.88rem;color:var(--slate-600);">Click any white square or clue to type letters. Use arrow keys or click cells to navigate.</p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-outline btn-sm" onclick="hintCrosswordLetter()">💡 Reveal Active Letter</button>
+              <button class="btn btn-primary btn-sm" onclick="checkCrossword()">✅ Check Crossword</button>
+            </div>
+          </div>
+
+          <div class="crossword-layout">
+            <div class="cw-grid" id="crosswordGrid"></div>
+
+            <div class="clues-box">
+              <div>
+                <h4 style="color:var(--cyan-600);margin-bottom:6px;">ACROSS</h4>
+                <ul class="clue-list" id="acrossClues"></ul>
+              </div>
+              <div>
+                <h4 style="color:var(--orange-600);margin-bottom:6px;">DOWN</h4>
+                <ul class="clue-list" id="downClues"></ul>
+              </div>
+            </div>
+          </div>
+          <p id="cwFeedback" style="margin-top:12px;font-weight:700;font-size:0.9rem;"></p>
+        </div>
+
+        <!-- Part B: Fill-in-the-Blank Engineer's Report -->
+        <div class="card">
+          <h3>Part B: Chief Engineer's Field Report</h3>
+          <p style="font-size:0.88rem;color:var(--slate-600);margin-bottom:12px;">Select the accurate scientific term from each dropdown menu to complete the structural safety report.</p>
+
+          <div class="report-paragraph" id="engineerReport">
+            <strong>PROJECT: Cedar Creek Pedestrian Suspension Bridge</strong><br/>
+            During our structural inspection, we first measured the
+            <select class="blank-select" id="rep-0">
+              <option value="">-- select term --</option>
+              <option value="dead load">dead load</option>
+              <option value="live load">live load</option>
+              <option value="torsion">torsion</option>
+            </select>,
+            which consists of the permanent weight of the steel towers and wooden deck planks. Next, we calculated the maximum
+            <select class="blank-select" id="rep-1">
+              <option value="">-- select term --</option>
+              <option value="live load">live load</option>
+              <option value="dead load">dead load</option>
+              <option value="shear">shear</option>
+            </select>
+            when 80 hikers cross the span at once. Because the bridge is located in a windy valley, we also accounted for
+            <select class="blank-select" id="rep-2">
+              <option value="">-- select term --</option>
+              <option value="environmental loads">environmental loads</option>
+              <option value="magnitudes">magnitudes</option>
+              <option value="fulcrums">fulcrums</option>
+            </select>
+            such as winter snowstorms and autumn gales. Inside the bridge, the main overhead steel cables experience strong pulling forces known as
+            <select class="blank-select" id="rep-3">
+              <option value="">-- select term --</option>
+              <option value="tension">tension</option>
+              <option value="compression">compression</option>
+              <option value="shear">shear</option>
+            </select>,
+            while the vertical concrete support towers are squeezed downward by
+            <select class="blank-select" id="rep-4">
+              <option value="">-- select term --</option>
+              <option value="compression">compression</option>
+              <option value="torsion">torsion</option>
+              <option value="tension">tension</option>
+            </select>.
+            Finally, heavy-duty steel bolts were installed at the anchor plates so the metal joints will not slide apart and snap from
+            <select class="blank-select" id="rep-5">
+              <option value="">-- select term --</option>
+              <option value="shear">shear</option>
+              <option value="gravity">gravity</option>
+              <option value="symmetry">symmetry</option>
+            </select>.
+          </div>
+
+          <div style="margin-top:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <button class="btn btn-emerald" onclick="checkEngineerReport()">📋 Submit Engineering Report</button>
+            <span id="reportFeedback" style="font-weight:700;font-size:0.9rem;"></span>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;">
+          <button class="btn btn-primary" onclick="switchModule(6)">Next: Final Certification Exam →</button>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           MODULE 6: FINAL CERTIFICATION EXAM & CERTIFICATE
+           ==================================================================== -->
+      <section class="module-panel" id="module-6">
+        <div class="module-banner">
+          <div>
+            <span class="tag-pill">Module 06 // Final Assessment</span>
+            <h2>Junior Structural Engineer Certification Exam</h2>
+            <p>Complete this 10-question cumulative assessment (score 70% or higher) to unlock your official Grade 7 Structural Engineer Certificate!</p>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:0.85rem;background:rgba(0,0,0,0.3);padding:10px 14px;border-radius:10px;">
+            Best Exam Score: <strong id="m6ScoreText">Not Taken</strong>
+          </div>
+        </div>
+
+        <div class="card" id="examContainer">
+          <div style="margin-bottom:16px;padding:12px;background:var(--slate-100);border-radius:10px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
+            <label for="studentNameInput" style="font-weight:800;">Student Full Name (for Certificate):</label>
+            <input type="text" id="studentNameInput" placeholder="Enter your first and last name..."
+              style="padding:9px 14px;border-radius:8px;border:2px solid var(--slate-300);font-size:0.95rem;min-width:260px;flex:1;"
+              oninput="saveStudentName(this.value)" />
+          </div>
+
+          <div id="examQuestionsList"></div>
+
+          <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+            <button class="btn btn-orange" onclick="gradeFinalExam()">🏆 Submit Final Certification Exam</button>
+            <span id="examFeedback" style="font-weight:700;font-size:0.95rem;"></span>
+          </div>
+        </div>
+
+        <!-- Printable Certificate Area -->
+        <div id="certificateWrapper" style="display:none;">
+          <div class="certificate-frame" id="certificateArea">
+            <div class="cert-seal">GRADE 7<br/>CERTIFIED</div>
+            <p style="font-family:var(--font-mono);letter-spacing:0.15em;color:var(--cyan-600);font-weight:800;font-size:0.85rem;">
+              ONTARIO GRADE 7 SCIENCE // STRUCTURES &amp; MECHANISMS
+            </p>
+            <h2 style="font-size:2rem;color:var(--navy-950);margin:6px 0;">Certificate of Structural Engineering</h2>
+            <p style="color:var(--slate-600);font-size:1rem;">This certifies that</p>
+            <div class="cert-name-display" id="certDisplayName">Junior Engineer</div>
+            <p style="max-width:620px;margin:10px auto;color:var(--navy-800);font-size:0.95rem;">
+              has successfully demonstrated mastery of <strong>External Forces</strong>, <strong>Dead, Live &amp; Environmental Loads</strong>, and <strong>Internal Forces (Tension, Compression, Shear &amp; Torsion)</strong> through interactive simulation, forensic case studies, and examination.
+            </p>
+
+            <div class="cert-stats">
+              <div class="cert-stat-box"><strong>Total XP Earned:</strong> <span id="certXp">0</span> XP</div>
+              <div class="cert-stat-box"><strong>Final Exam Score:</strong> <span id="certExamScore">0/10</span></div>
+              <div class="cert-stat-box"><strong>Time on Task:</strong> <span id="certTime">00:00</span></div>
+              <div class="cert-stat-box"><strong>Date Issued:</strong> <span id="certDate"></span></div>
+            </div>
+
+            <div style="margin-top:20px;display:flex;justify-content:space-around;flex-wrap:wrap;gap:20px;font-size:0.82rem;color:var(--slate-600);">
+              <div>_____________________________<br/>Chief Structural Instructor</div>
+              <div>_____________________________<br/>Grade 7 Science Lab Verification</div>
+            </div>
+          </div>
+
+          <div class="no-print" style="margin-top:14px;display:flex;justify-content:center;gap:12px;">
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save Certificate as PDF</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Footer -->
+  <footer class="studio-footer no-print">
+    <div class="footer-inner">
+      <span>Grade 7 Science Interactive Curriculum • Structures &amp; Mechanisms</span>
+      <button class="btn btn-outline btn-sm" style="background:transparent;color:#cbd5e1;border-color:#475569;" onclick="confirmResetProgress()">
+        Reset Saved Progress
+      </button>
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       JAVASCRIPT: STATE, INTERACTIVE DIAGRAMS, CANVAS PHYSICS, GAMES & LOGIC
+       ======================================================================== -->
+  <script>
+    /* ========================================================================
+       1. APPLICATION STATE & LOCALSTORAGE PERSISTENCE
+       ======================================================================== */
+    const DEFAULT_STATE = {
+      xp: 0,
+      secondsElapsed: 0,
+      studentName: "",
+      modulesCompleted: { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false },
+      m1QuickChecks: { 1: false, 2: false, 3: false },
+      m2Challenges: { 1: false, 2: false, 3: false },
+      m3GameAScore: 0,
+      m3GameBScore: 0,
+      m4CasesCompleted: [false, false, false],
+      m5CrosswordDone: false,
+      m5ReportDone: false,
+      m6ExamBest: null
+    };
+
+    let appState = loadState();
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem("g7_structural_lab_v1");
+        if (raw) {
+          return Object.assign({}, DEFAULT_STATE, JSON.parse(raw));
+        }
+      } catch (e) {
+        console.warn("Storage unavailable:", e);
+      }
+      return JSON.parse(JSON.stringify(DEFAULT_STATE));
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem("g7_structural_lab_v1", JSON.stringify(appState));
+      } catch (e) {
+        console.warn("Could not save state:", e);
+      }
+      updateHUD();
+    }
+
+    function showToast(msg, borderColor = "#10b981") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      toast.style.borderLeftColor = borderColor;
+      toast.textContent = msg;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transition = "opacity 0.3s ease";
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    function addXP(amount, reason) {
+      appState.xp += amount;
+      showToast(`+${amount} XP: ${reason}`, "#f59e0b");
+      saveState();
+    }
+
+    /* Reset Confirmation Inline Modal Banner */
+    let resetPending = false;
+    function confirmResetProgress() {
+      if (!resetPending) {
+        resetPending = true;
+        showToast("Click 'Reset Saved Progress' again within 4 seconds to wipe all data.", "#e11d48");
+        setTimeout(() => { resetPending = false; }, 4000);
+      } else {
+        localStorage.removeItem("g7_structural_lab_v1");
+        appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
+        location.reload();
+      }
+    }
+
+    /* Live Study Timer */
+    setInterval(() => {
+      appState.secondsElapsed++;
+      const mins = String(Math.floor(appState.secondsElapsed / 60)).padStart(2, "0");
+      const secs = String(appState.secondsElapsed % 60).padStart(2, "0");
+      document.getElementById("hudTimer").textContent = `${mins}:${secs}`;
+      if (appState.secondsElapsed % 15 === 0) {
+        try { localStorage.setItem("g7_structural_lab_v1", JSON.stringify(appState)); } catch (e) {}
+      }
+    }, 1000);
+
+    function updateHUD() {
+      document.getElementById("hudXp").textContent = appState.xp;
+
+      // Check module completion rules
+      if (appState.m1QuickChecks[1] && appState.m1QuickChecks[2] && appState.m1QuickChecks[3]) {
+        appState.modulesCompleted[1] = true;
+      }
+      if (appState.m2Challenges[1] && appState.m2Challenges[2] && appState.m2Challenges[3]) {
+        appState.modulesCompleted[2] = true;
+      }
+      if (appState.m3GameAScore >= 7 && appState.m3GameBScore >= 6) {
+        appState.modulesCompleted[3] = true;
+      }
+      if (appState.m4CasesCompleted[0] && appState.m4CasesCompleted[1] && appState.m4CasesCompleted[2]) {
+        appState.modulesCompleted[4] = true;
+      }
+      if (appState.m5CrosswordDone && appState.m5ReportDone) {
+        appState.modulesCompleted[5] = true;
+      }
+      if (appState.m6ExamBest !== null && appState.m6ExamBest >= 7) {
+        appState.modulesCompleted[6] = true;
+      }
+
+      let doneCount = 0;
+      for (let i = 1; i <= 6; i++) {
+        const done = appState.modulesCompleted[i];
+        if (done) doneCount++;
+        const statusEl = document.getElementById(`status-${i}`);
+        const badgeEl = document.getElementById(`badge-${i}`);
+        if (statusEl) statusEl.textContent = done ? "✅" : "⭕";
+        if (badgeEl) {
+          if (done) badgeEl.classList.add("earned");
+          else badgeEl.classList.remove("earned");
+        }
+      }
+
+      const pct = Math.round((doneCount / 6) * 100);
+      document.getElementById("hudProgressFill").style.width = `${pct}%`;
+      document.getElementById("hudProgressPct").textContent = `${pct}%`;
+
+      // Update module sub-counters
+      const qcCount = Object.values(appState.m1QuickChecks).filter(Boolean).length;
+      document.getElementById("m1ScoreText").textContent = `${qcCount} / 3`;
+
+      const chCount = Object.values(appState.m2Challenges).filter(Boolean).length;
+      document.getElementById("m2ScoreText").textContent = `${chCount} / 3`;
+
+      document.getElementById("m3ScoreA").textContent = `${appState.m3GameAScore}/10`;
+      document.getElementById("m3ScoreB").textContent = `${appState.m3GameBScore}/8`;
+
+      const caseCount = appState.m4CasesCompleted.filter(Boolean).length;
+      document.getElementById("m4ScoreText").textContent = `${caseCount} / 3`;
+
+      const m5Count = (appState.m5CrosswordDone ? 1 : 0) + (appState.m5ReportDone ? 1 : 0);
+      document.getElementById("m5ScoreText").textContent = `${m5Count} / 2`;
+
+      if (appState.m6ExamBest !== null) {
+        document.getElementById("m6ScoreText").textContent = `${appState.m6ExamBest} / 10`;
+      }
+    }
+
+    function switchModule(modNum) {
+      document.querySelectorAll(".module-panel").forEach(p => p.classList.remove("active"));
+      document.querySelectorAll(".nav-card").forEach(n => n.classList.remove("active"));
+
+      document.getElementById(`module-${modNum}`).classList.add("active");
+      document.querySelector(`.nav-card[data-mod="${modNum}"]`).classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      if (modNum === 2) {
+        resizeCanvas();
+      }
+    }
+
+    /* ========================================================================
+       2. MODULE 1: INTERACTIVE FIELD GUIDE SVG DIAGRAMS & QUICK CHECKS
+       ======================================================================== */
+    const SVG_LIBRARY = {
+      ext: {
+        gravity: {
+          caption: "Gravity: A non-contact external force pulling straight down toward Earth's center on every part of a structure.",
+          svg: `<svg viewBox="0 0 360 220">
+            <rect x="20" y="180" width="320" height="22" rx="4" fill="#334155"/>
+            <rect x="120" y="70" width="120" height="110" rx="6" fill="#0284c7" stroke="#38bdf8" stroke-width="2"/>
+            <polygon points="110,70 180,25 250,70" fill="#f97316"/>
+            <g stroke="#facc15" stroke-width="3" fill="#facc15">
+              <line x1="145" y1="85" x2="145" y2="155"/><polygon points="145,165 139,152 151,152"/>
+              <line x1="180" y1="85" x2="180" y2="155"/><polygon points="180,165 174,152 186,152"/>
+              <line x1="215" y1="85" x2="215" y2="155"/><polygon points="215,165 209,152 221,152"/>
+            </g>
+            <text x="180" y="214" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="monospace">EARTH'S GRAVITATIONAL PULL (DOWNWARD)</text>
+          </svg>`
+        },
+        wind_seismic: {
+          caption: "Wind & Seismic Forces: Wind pushes horizontally against walls/roofs, while earthquakes shake the foundation side-to-side.",
+          svg: `<svg viewBox="0 0 360 220">
+            <rect x="20" y="180" width="320" height="20" rx="4" fill="#475569"/>
+            <rect x="165" y="45" width="75" height="135" rx="4" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <g stroke="#38bdf8" stroke-width="3" fill="#38bdf8">
+              <path d="M 35 70 Q 75 60 110 70 T 145 70" fill="none"/>
+              <polygon points="155,70 142,64 142,76"/>
+              <path d="M 25 110 Q 65 100 100 110 T 145 110" fill="none"/>
+              <polygon points="155,110 142,104 142,116"/>
+            </g>
+            <g stroke="#f97316" stroke-width="3" fill="#f97316">
+              <line x1="90" y1="190" x2="145" y2="190"/><polygon points="82,190 93,185 93,195"/><polygon points="153,190 142,185 142,195"/>
+              <line x1="255" y1="190" x2="310" y2="190"/><polygon points="247,190 258,185 258,195"/><polygon points="318,190 307,185 307,195"/>
+            </g>
+            <text x="85" y="50" fill="#38bdf8" font-size="11" font-family="monospace">WIND LOAD</text>
+            <text x="280" y="172" fill="#f97316" font-size="11" text-anchor="middle" font-family="monospace">SEISMIC SHAKE</text>
+          </svg>`
+        },
+        magnitude_dir: {
+          caption: "Magnitude & Direction: A longer arrow represents a larger force (Magnitude in Newtons); the arrowhead shows Direction.",
+          svg: `<svg viewBox="0 0 360 220">
+            <rect x="210" y="55" width="90" height="125" rx="6" fill="#334155" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="120" y1="85" x2="195" y2="85" stroke="#10b981" stroke-width="4"/>
+            <polygon points="205,85 191,78 191,92" fill="#10b981"/>
+            <text x="115" y="75" fill="#10b981" font-size="11" font-family="monospace">Small Magnitude (50 N)</text>
+            <line x1="35" y1="140" x2="195" y2="140" stroke="#f97316" stroke-width="6"/>
+            <polygon points="207,140 190,130 190,150" fill="#f97316"/>
+            <text x="35" y="126" fill="#f97316" font-size="11" font-family="monospace">Large Magnitude (500 N → East)</text>
+          </svg>`
+        },
+        point_plane: {
+          caption: "Point & Plane of Application: Pushing high on the vertical side plane creates tipping leverage around the base.",
+          svg: `<svg viewBox="0 0 360 220">
+            <rect x="40" y="185" width="280" height="16" fill="#475569"/>
+            <g transform="rotate(10 225 185)">
+              <rect x="165" y="45" width="60" height="140" rx="4" fill="#0284c7" stroke="#e0f2fe" stroke-width="2"/>
+              <circle cx="165" cy="60" r="6" fill="#facc15"/>
+            </g>
+            <line x1="65" y1="60" x2="152" y2="60" stroke="#f97316" stroke-width="4"/>
+            <polygon points="162,60 148,53 148,67" fill="#f97316"/>
+            <text x="55" y="42" fill="#facc15" font-size="11" font-family="monospace">HIGH POINT OF APPLICATION</text>
+            <text x="235" y="120" fill="#cbd5e1" font-size="11" font-family="monospace">SIDE PLANE</text>
+          </svg>`
+        }
+      },
+      load: {
+        dead: {
+          caption: "Dead Load: The permanent weight of the bridge deck, steel trusses, and concrete piers themselves.",
+          svg: `<svg viewBox="0 0 360 220">
+            <rect x="30" y="115" width="300" height="18" rx="3" fill="#64748b" stroke="#cbd5e1" stroke-width="2"/>
+            <rect x="55" y="133" width="24" height="65" fill="#475569"/>
+            <rect x="281" y="133" width="24" height="65" fill="#475569"/>
+            <polygon points="60,115 120,70 180,115 240,70 300,115" fill="none" stroke="#94a3b8" stroke-width="4"/>
+            <g fill="#f97316">
+              <line x1="120" y1="138" x2="120" y2="165" stroke="#f97316" stroke-width="3"/><polygon points="120,172 115,162 125,162"/>
+              <line x1="180" y1="138" x2="180" y2="165" stroke="#f97316" stroke-width="3"/><polygon points="180,172 175,162 185,162"/>
+              <line x1="240" y1="138" x2="240" y2="165" stroke="#f97316" stroke-width="3"/><polygon points="240,172 235,162 245,162"/>
+            </g>
+            <text x="180" y="35" fill="#f97316" font-size="12" text-anchor="middle" font-family="monospace">DEAD LOAD = WEIGHT OF STRUCTURE ITSELF</text>
+          </svg>`
+        },
+        live: {
+          caption: "Live Load: Moving trucks, cars, and pedestrians whose weight and position constantly change.",
+          svg: `<svg viewBox="0 0 360 220">
+            <rect x="30" y="125" width="300" height="16" rx="3" fill="#475569"/>
+            <rect x="55" y="141" width="24" height="58" fill="#334155"/>
+            <rect x="281" y="141" width="24" height="58" fill="#334155"/>
+            <rect x="115" y="88" width="75" height="30" rx="5" fill="#06b6d4"/>
+            <rect x="190" y="98" width="26" height="20" rx="4" fill="#0284c7"/>
+            <circle cx="135" cy="120" r="7" fill="#f8fafc"/>
+            <circle cx="175" cy="120" r="7" fill="#f8fafc"/>
+            <circle cx="205" cy="120" r="7" fill="#f8fafc"/>
+            <line x1="165" y1="45" x2="165" y2="80" stroke="#10b981" stroke-width="4"/>
+            <polygon points="165,86 158,74 172,74" fill="#10b981"/>
+            <text x="180" y="32" fill="#10b981" font-size="12" text-anchor="middle" font-family="monospace">LIVE LOAD = DYNAMIC / MOVING TRAFFIC</text>
+          </svg>`
+        },
+        env: {
+          caption: "Environmental Load: Heavy snowdrifts, wind gusts, and ice storms caused by nature.",
+          svg: `<svg viewBox="0 0 360 220">
+            <rect x="65" y="105" width="230" height="85" rx="4" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+            <polygon points="50,105 180,55 310,105" fill="#475569"/>
+            <path d="M 50 102 Q 115 72 180 48 Q 245 72 310 102 L 310 108 L 50 108 Z" fill="#e0f2fe"/>
+            <text x="180" y="34" fill="#38bdf8" font-size="12" text-anchor="middle" font-family="monospace">ENVIRONMENTAL LOAD (SNOW + WIND)</text>
+            <circle cx="95" cy="25" r="3" fill="#fff"/><circle cx="255" cy="22" r="3" fill="#fff"/><circle cx="290" cy="48" r="3" fill="#fff"/>
+          </svg>`
+        }
+      },
+      int: {
+        tension: {
+          caption: "Tension: Pulling forces stretch the material apart along its axis.",
+          svg: `<svg viewBox="0 0 360 200">
+            <rect x="95" y="82" width="170" height="36" rx="18" fill="#0284c7" stroke="#38bdf8" stroke-width="3"/>
+            <line x1="85" y1="100" x2="30" y2="100" stroke="#38bdf8" stroke-width="5"/>
+            <polygon points="20,100 35,91 35,109" fill="#38bdf8"/>
+            <line x1="275" y1="100" x2="330" y2="100" stroke="#38bdf8" stroke-width="5"/>
+            <polygon points="340,100 325,91 325,109" fill="#38bdf8"/>
+            <text x="180" y="155" fill="#38bdf8" font-size="13" text-anchor="middle" font-family="monospace">TENSION: PULLING APART</text>
+          </svg>`
+        },
+        compression: {
+          caption: "Compression: Pushing forces squeeze and shorten the material.",
+          svg: `<svg viewBox="0 0 360 200">
+            <rect x="115" y="72" width="130" height="56" rx="8" fill="#ea580c" stroke="#fdba74" stroke-width="3"/>
+            <line x1="30" y1="100" x2="98" y2="100" stroke="#f97316" stroke-width="5"/>
+            <polygon points="108,100 93,91 93,109" fill="#f97316"/>
+            <line x1="330" y1="100" x2="262" y2="100" stroke="#f97316" stroke-width="5"/>
+            <polygon points="252,100 267,91 267,109" fill="#f97316"/>
+            <text x="180" y="162" fill="#fdba74" font-size="13" text-anchor="middle" font-family="monospace">COMPRESSION: SQUEEZING INWARD</text>
+          </svg>`
+        },
+        shear: {
+          caption: "Shear: Parallel forces push in opposite directions, sliding layers apart.",
+          svg: `<svg viewBox="0 0 360 200">
+            <rect x="95" y="65" width="90" height="35" rx="4" fill="#eab308"/>
+            <rect x="175" y="102" width="90" height="35" rx="4" fill="#ca8a04"/>
+            <line x1="40" y1="82" x2="82" y2="82" stroke="#facc15" stroke-width="4"/>
+            <polygon points="90,82 78,75 78,89" fill="#facc15"/>
+            <line x1="320" y1="120" x2="278" y2="120" stroke="#facc15" stroke-width="4"/>
+            <polygon points="270,120 282,113 282,127" fill="#facc15"/>
+            <text x="180" y="172" fill="#facc15" font-size="13" text-anchor="middle" font-family="monospace">SHEAR: OPPOSITE SLIDING FORCES</text>
+          </svg>`
+        },
+        torsion: {
+          caption: "Torsion: Twisting forces rotate opposite ends in opposite directions.",
+          svg: `<svg viewBox="0 0 360 200">
+            <rect x="85" y="75" width="190" height="50" rx="12" fill="#7c3aed" stroke="#c084fc" stroke-width="3"/>
+            <path d="M 120 75 Q 145 100 120 125 M 165 75 Q 190 100 165 125 M 210 75 Q 235 100 210 125" stroke="#e9d5ff" stroke-width="2" fill="none"/>
+            <path d="M 65 65 A 35 35 0 0 0 65 135" stroke="#c084fc" stroke-width="4" fill="none"/>
+            <polygon points="65,140 58,128 73,130" fill="#c084fc"/>
+            <path d="M 295 135 A 35 35 0 0 0 295 65" stroke="#c084fc" stroke-width="4" fill="none"/>
+            <polygon points="295,60 302,72 287,70" fill="#c084fc"/>
+            <text x="180" y="174" fill="#c084fc" font-size="13" text-anchor="middle" font-family="monospace">TORSION: TWISTING FORCE</text>
+          </svg>`
+        }
+      }
+    };
+
+    function selectDiagram(group, key, el) {
+      const parent = el.parentElement;
+      parent.querySelectorAll(".concept-item").forEach(item => item.classList.remove("active"));
+      el.classList.add("active");
+
+      const data = SVG_LIBRARY[group][key];
+      const capId = group === "ext" ? "svgExtCaption" : group === "load" ? "svgLoadCaption" : "svgIntCaption";
+      const boxId = group === "ext" ? "svgExtContainer" : group === "load" ? "svgLoadContainer" : "svgIntContainer";
+
+      document.getElementById(boxId).innerHTML = data.svg;
+      document.getElementById(capId).textContent = data.caption;
+    }
+
+    function answerQC(qcNum, optIdx, isCorrect, btnEl) {
+      const container = document.getElementById(`qc-${qcNum}`);
+      const fb = document.getElementById(`qc-fb-${qcNum}`);
+      container.querySelectorAll(".qc-btn").forEach(b => b.classList.remove("correct", "wrong"));
+
+      if (isCorrect) {
+        btnEl.classList.add("correct");
+        fb.style.color = "#059669";
+        fb.textContent = "Spot on! Great engineering reasoning.";
+        if (!appState.m1QuickChecks[qcNum]) {
+          appState.m1QuickChecks[qcNum] = true;
+          addXP(40, `Field Guide Quick Check ${qcNum} Solved`);
+          saveState();
+        }
+      } else {
+        btnEl.classList.add("wrong");
+        fb.style.color = "#e11d48";
+        fb.textContent = "Not quite—review the diagram above and try another option!";
+      }
+    }
+
+    /* ========================================================================
+       3. MODULE 2: STRUCTURAL FORCE LAB (HTML5 CANVAS PHYSICS SIMULATOR)
+       ======================================================================== */
+    const simState = {
+      material: "wood", // wood, concrete, steel
+      trucks: 1,
+      pos: 50,
+      snow: 0,
+      wind: 10,
+      seismicTimer: 0,
+      collapsed: false,
+      collapseReason: "",
+      stressPct: 18,
+      animPhase: 0
+    };
+
+    const MAT_PROPS = {
+      wood: { name: "Timber Beam", deadLoad: 12, maxCapacity: 78, color: "#b45309", border: "#f59e0b" },
+      concrete: { name: "Reinforced Concrete", deadLoad: 26, maxCapacity: 118, color: "#64748b", border: "#cbd5e1" },
+      steel: { name: "Steel Truss", deadLoad: 18, maxCapacity: 155, color: "#0284c7", border: "#38bdf8" }
+    };
+
+    function setSimMaterial(mat) {
+      simState.material = mat;
+      document.querySelectorAll(".mat-btn").forEach(b => b.classList.remove("active"));
+      document.getElementById(`mat-${mat}`).classList.add("active");
+      updateSimParams();
+    }
+
+    function updateSimParams() {
+      simState.trucks = parseInt(document.getElementById("sliderTrucks").value, 10);
+      simState.pos = parseInt(document.getElementById("sliderPos").value, 10);
+      simState.snow = parseInt(document.getElementById("sliderSnow").value, 10);
+      simState.wind = parseInt(document.getElementById("sliderWind").value, 10);
+
+      document.getElementById("valTrucks").textContent = `${simState.trucks} Truck${simState.trucks === 1 ? "" : "s"}`;
+      const posLabel = simState.pos < 35 ? "Left Span" : simState.pos > 65 ? "Right Span" : "Center";
+      document.getElementById("valPos").textContent = `${simState.pos}% (${posLabel})`;
+      document.getElementById("valSnow").textContent = `${simState.snow} cm`;
+      document.getElementById("valWind").textContent = `${simState.wind} km/h`;
+
+      computeSimStress();
+    }
+
+    function computeSimStress() {
+      const mat = MAT_PROPS[simState.material];
+      // Leverage multiplier: center of beam (50%) experiences highest bending moment
+      const distFromCenter = Math.abs(simState.pos - 50) / 50; // 0 at center, 1 at edge
+      const leverageFactor = 1.15 - (distFromCenter * 0.45);
+
+      const liveForce = simState.trucks * 16 * leverageFactor;
+      const snowForce = simState.snow * 0.35;
+      const windForce = simState.wind * 0.28;
+      const seismicForce = simState.seismicTimer > 0 ? 28 : 0;
+
+      const totalLoad = mat.deadLoad + liveForce + snowForce + windForce + seismicForce;
+      const stress = Math.min(125, Math.round((totalLoad / mat.maxCapacity) * 100));
+      simState.stressPct = stress;
+
+      const fill = document.getElementById("stressMeterFill");
+      const label = document.getElementById("stressPctLabel");
+      const note = document.getElementById("safetyNote");
+      const log = document.getElementById("simStatusLog");
+
+      label.textContent = `${stress}%`;
+      fill.style.width = `${Math.min(100, stress)}%`;
+
+      if (stress >= 100 && !simState.collapsed) {
+        simState.collapsed = true;
+        if (simState.wind >= 105) {
+          simState.collapseReason = "STRUCTURAL FAILURE: High crosswinds created excessive TORSION (twisting) and snapped the span!";
+        } else if (distFromCenter > 0.55) {
+          simState.collapseReason = "STRUCTURAL FAILURE: Heavy load near the pier caused extreme SHEAR failure at the support!";
+        } else {
+          simState.collapseReason = "STRUCTURAL FAILURE: Excessive bending caused COMPRESSION crushing on top and TENSION snapping on bottom!";
+        }
+      }
+
+      if (simState.collapsed) {
+        fill.style.background = "#e11d48";
+        note.textContent = "COLLAPSED! Click 'Repair / Reset' to rebuild.";
+        note.style.color = "#e11d48";
+        log.textContent = simState.collapseReason;
+        log.style.color = "#e11d48";
+      } else if (stress >= 70) {
+        fill.style.background = "#f59e0b";
+        note.textContent = "WARNING: High Internal Stress (≥ 70%)";
+        note.style.color = "#d97706";
+        log.textContent = `Caution: ${mat.name} is deflecting heavily under combined loads.`;
+        log.style.color = "#d97706";
+      } else {
+        fill.style.background = "#10b981";
+        note.textContent = "Safe Operating Zone (< 70% stress)";
+        note.style.color = "#059669";
+        log.textContent = `Status: ${mat.name} stable. Top fibers in Compression, bottom fibers in Tension.`;
+        log.style.color = "#0f172a";
+      }
+    }
+
+    function triggerEarthquake() {
+      if (simState.collapsed) return;
+      simState.seismicTimer = 90; // frames
+      showToast("🌋 Seismic ground wave triggered!", "#f97316");
+    }
+
+    function resetSim() {
+      simState.collapsed = false;
+      simState.collapseReason = "";
+      simState.seismicTimer = 0;
+      document.getElementById("sliderTrucks").value = 1;
+      document.getElementById("sliderPos").value = 50;
+      document.getElementById("sliderSnow").value = 0;
+      document.getElementById("sliderWind").value = 10;
+      updateSimParams();
+    }
+
+    function verifyLabChallenge(num) {
+      if (simState.collapsed) {
+        showToast("Bridge collapsed! Repair and adjust loads to pass.", "#e11d48");
+        return;
+      }
+      let passed = false;
+      if (num === 1) {
+        passed = simState.trucks >= 3 && simState.snow >= 60 && simState.stressPct < 70;
+      } else if (num === 2) {
+        passed = simState.wind >= 120 && simState.trucks >= 2 && simState.stressPct < 95;
+      } else if (num === 3) {
+        passed = simState.material === "wood" && simState.trucks >= 3 && (simState.pos <= 22 || simState.pos >= 78) && simState.stressPct < 85;
+      }
+
+      if (passed) {
+        if (!appState.m2Challenges[num]) {
+          appState.m2Challenges[num] = true;
+          addXP(50, `Lab Challenge ${num} Verified`);
+          saveState();
+        } else {
+          showToast(`Lab Challenge ${num} already verified!`, "#10b981");
+        }
+        renderChallengesUI();
+      } else {
+        showToast("Conditions not met yet—check the required sliders and stress limit!", "#f59e0b");
+      }
+    }
+
+    function renderChallengesUI() {
+      for (let i = 1; i <= 3; i++) {
+        const card = document.getElementById(`chal-card-${i}`);
+        const btn = document.getElementById(`chal-btn-${i}`);
+        if (appState.m2Challenges[i]) {
+          card.classList.add("passed");
+          btn.textContent = "✅ Challenge Passed";
+          btn.classList.remove("btn-primary");
+          btn.classList.add("btn-emerald");
+        }
+      }
+    }
+
+    /* Canvas Rendering Loop */
+    const canvas = document.getElementById("bridgeCanvas");
+    const ctx = canvas.getContext("2d");
+
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = Math.max(300, rect.width - 24);
+      canvas.height = 360;
+    }
+
+    function renderBridgeCanvas() {
+      simState.animPhase += 0.06;
+      if (simState.seismicTimer > 0) {
+        simState.seismicTimer--;
+        if (simState.seismicTimer === 0) computeSimStress();
+      }
+
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      // Subtle Blueprint Grid on Canvas
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.08)";
+      ctx.lineWidth = 1;
+      for (let x = 0; x < w; x += 30) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = 0; y < h; y += 30) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+
+      const shakeX = simState.seismicTimer > 0 ? Math.sin(simState.animPhase * 6) * 7 : 0;
+      const shakeY = simState.seismicTimer > 0 ? Math.cos(simState.animPhase * 5) * 4 : 0;
+
+      ctx.save();
+      ctx.translate(shakeX, shakeY);
+
+      // Water / Gorge at bottom
+      ctx.fillStyle = "#0f294a";
+      ctx.fillRect(0, h - 42, w, 42);
+
+      // Left and Right Concrete Abutments / Piers
+      const spanStart = w * 0.14;
+      const spanEnd = w * 0.86;
+      const spanLen = spanEnd - spanStart;
+      const deckY = h * 0.56;
+
+      ctx.fillStyle = "#334155";
+      ctx.fillRect(0, deckY, spanStart + 14, h - deckY);
+      ctx.fillRect(spanEnd - 14, deckY, w - spanEnd + 14, h - deckY);
+
+      // Wind Gust Lines
+      if (simState.wind > 15) {
+        const windCount = Math.floor(simState.wind / 18);
+        ctx.strokeStyle = "rgba(103, 232, 249, 0.45)";
+        ctx.lineWidth = 2;
+        for (let i = 0; i < windCount; i++) {
+          const wy = 40 + ((i * 37) % (deckY - 50));
+          const wx = ((simState.animPhase * (40 + simState.wind * 0.6) + i * 110) % (w + 100)) - 80;
+          ctx.beginPath();
+          ctx.moveTo(wx, wy);
+          ctx.lineTo(wx + 55, wy);
+          ctx.stroke();
+        }
+      }
+
+      const mat = MAT_PROPS[simState.material];
+      const loadX = spanStart + (simState.pos / 100) * spanLen;
+
+      if (!simState.collapsed) {
+        // Calculate visual deflection
+        const deflection = Math.min(58, (simState.stressPct / 100) * 48);
+        const twistOffset = (simState.wind / 140) * Math.sin(simState.animPhase * 1.6) * 10;
+
+        // Draw Curved Beam (Quadratic Bezier)
+        const ctrlX = loadX;
+        const ctrlY = deckY + deflection * 1.6 + twistOffset;
+
+        ctx.lineWidth = 18;
+        ctx.lineCap = "round";
+        ctx.strokeStyle = mat.color;
+        ctx.beginPath();
+        ctx.moveTo(spanStart, deckY);
+        ctx.quadraticCurveTo(ctrlX, ctrlY, spanEnd, deckY);
+        ctx.stroke();
+
+        // Steel Truss Overlay if steel
+        if (simState.material === "steel") {
+          ctx.strokeStyle = "#38bdf8";
+          ctx.lineWidth = 2.5;
+          const steps = 8;
+          for (let i = 0; i < steps; i++) {
+            const t1 = i / steps;
+            const t2 = (i + 1) / steps;
+            const x1 = spanStart + t1 * spanLen;
+            const x2 = spanStart + t2 * spanLen;
+            const y1 = (1 - t1) * (1 - t1) * deckY + 2 * (1 - t1) * t1 * ctrlY + t1 * t1 * deckY;
+            const y2 = (1 - t2) * (1 - t2) * deckY + 2 * (1 - t2) * t2 * ctrlY + t2 * t2 * deckY;
+            const xm = (x1 + x2) / 2;
+            const ym = (y1 + y2) / 2 - 26;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(xm, ym);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+          }
+        }
+
+        // Snow Layer on Top of Beam
+        if (simState.snow > 0) {
+          ctx.strokeStyle = "#f8fafc";
+          ctx.lineWidth = Math.max(3, (simState.snow / 100) * 14);
+          ctx.beginPath();
+          ctx.moveTo(spanStart, deckY - 11);
+          ctx.quadraticCurveTo(ctrlX, ctrlY - 11, spanEnd, deckY - 11);
+          ctx.stroke();
+        }
+
+        // Draw Trucks (Live Load)
+        const t = simState.pos / 100;
+        const beamAtLoadY = (1 - t) * (1 - t) * deckY + 2 * (1 - t) * t * ctrlY + t * t * deckY;
+        for (let k = 0; k < simState.trucks; k++) {
+          const offset = (k - (simState.trucks - 1) / 2) * 34;
+          const tx = Math.max(spanStart + 16, Math.min(spanEnd - 16, loadX + offset));
+          const localT = (tx - spanStart) / spanLen;
+          const ty = (1 - localT) * (1 - localT) * deckY + 2 * (1 - localT) * localT * ctrlY + localT * localT * deckY;
+
+          // Truck Body
+          ctx.fillStyle = "#10b981";
+          ctx.fillRect(tx - 13, ty - 28, 26, 15);
+          ctx.fillStyle = "#059669";
+          ctx.fillRect(tx + 6, ty - 24, 9, 11);
+          // Wheels
+          ctx.fillStyle = "#ffffff";
+          ctx.beginPath(); ctx.arc(tx - 7, ty - 12, 3.5, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(tx + 8, ty - 12, 3.5, 0, Math.PI * 2); ctx.fill();
+        }
+
+        // INTERNAL FORCE VECTORS
+        const midX = (spanStart + spanEnd) / 2;
+        const midY = 0.25 * deckY + 0.5 * ctrlY + 0.25 * deckY;
+
+        // Top Compression Arrows (Orange pointing inward)
+        drawArrow(ctx, midX - 42, midY - 18, midX - 10, midY - 18, "#f97316");
+        drawArrow(ctx, midX + 42, midY - 18, midX + 10, midY - 18, "#f97316");
+
+        // Bottom Tension Arrows (Cyan pointing outward)
+        drawArrow(ctx, midX - 10, midY + 22, midX - 45, midY + 22, "#38bdf8");
+        drawArrow(ctx, midX + 10, midY + 22, midX + 45, midY + 22, "#38bdf8");
+
+        // Shear Arrows near Supports (Yellow vertical opposite arrows)
+        drawArrow(ctx, spanStart + 16, deckY - 22, spanStart + 16, deckY + 8, "#facc15");
+        drawArrow(ctx, spanStart + 26, deckY + 24, spanStart + 26, deckY - 6, "#facc15");
+
+        // Torsion indicator if wind > 65
+        if (simState.wind > 65) {
+          ctx.fillStyle = "#c084fc";
+          ctx.font = "bold 12px monospace";
+          ctx.fillText("🔄 TORSION TWIST ACTIVE", midX - 75, 28);
+        }
+      } else {
+        // COLLAPSED BROKEN BEAM ANIMATION
+        ctx.strokeStyle = "#e11d48";
+        ctx.lineWidth = 16;
+        ctx.beginPath();
+        ctx.moveTo(spanStart, deckY);
+        ctx.lineTo(w * 0.46, h - 35);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(spanEnd, deckY);
+        ctx.lineTo(w * 0.54, h - 35);
+        ctx.stroke();
+
+        ctx.fillStyle = "#ffe4e6";
+        ctx.font = "bold 16px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("⚠️ BRIDGE COLLAPSED! CLICK 'REPAIR / RESET'", w / 2, 65);
+        ctx.textAlign = "left";
+      }
+
+      ctx.restore();
+      requestAnimationFrame(renderBridgeCanvas);
+    }
+
+    function drawArrow(context, x1, y1, x2, y2, color) {
+      const headlen = 8;
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+      context.strokeStyle = color;
+      context.fillStyle = color;
+      context.lineWidth = 3;
+      context.beginPath();
+      context.moveTo(x1, y1);
+      context.lineTo(x2, y2);
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(x2, y2);
+      context.lineTo(x2 - headlen * Math.cos(angle - Math.PI / 6), y2 - headlen * Math.sin(angle - Math.PI / 6));
+      context.lineTo(x2 - headlen * Math.cos(angle + Math.PI / 6), y2 - headlen * Math.sin(angle + Math.PI / 6));
+      context.closePath();
+      context.fill();
+    }
+
+    /* ========================================================================
+       4. MODULE 3: FORCE SORTER & SCENARIO ARCADE
+       ======================================================================== */
+    const GAME_A_ITEMS = [
+      { emoji: "🎹", text: "A grand piano sitting in a 2nd-floor music room", ans: "live", exp: "Live Load: Furniture and pianos can be moved or removed." },
+      { emoji: "🏠", text: "Asphalt shingles nailed onto a house roof", ans: "dead", exp: "Dead Load: Roof shingles are a permanent part of the building structure." },
+      { emoji: "❄️", text: "65 cm of wet Canadian snow piled on a arena roof", ans: "env", exp: "Environmental Load: Snow accumulation comes from weather/nature." },
+      { emoji: "🚗", text: "Rush-hour commuter cars crossing the Burlington Skyway", ans: "live", exp: "Live Load: Vehicles are dynamic, moving loads." },
+      { emoji: "🏗️", text: "Steel I-beams and concrete floors of a skyscraper", ans: "dead", exp: "Dead Load: The structural skeleton itself is a permanent static load." },
+      { emoji: "💨", text: "110 km/h autumn wind gusts pushing against a billboard", ans: "env", exp: "Environmental Load: Wind is a natural weather force." },
+      { emoji: "📚", text: "Students and textbooks inside a Grade 7 classroom", ans: "live", exp: "Live Load: People and books enter and leave the building." },
+      { emoji: "🧱", text: "Red clay bricks forming the exterior wall of a school", ans: "dead", exp: "Dead Load: Brick walls are permanent structural weight." },
+      { emoji: "🧊", text: "Thick freezing rain coating hydro wires and tree branches", ans: "env", exp: "Environmental Load: Ice buildup is caused by weather conditions." },
+      { emoji: "🌉", text: "Heavy steel suspension cables on the Golden Gate Bridge", ans: "dead", exp: "Dead Load: The cables are a permanent part of the bridge itself." }
+    ];
+
+    let gameAIdx = 0;
+    let gameASessionScore = 0;
+    let gameAStreakCount = 0;
+
+    function switchArcadeGame(which) {
+      if (which === "A") {
+        document.getElementById("gameAPanel").style.display = "block";
+        document.getElementById("gameBPanel").style.display = "none";
+        document.getElementById("tabGameA").className = "btn btn-primary";
+        document.getElementById("tabGameB").className = "btn btn-outline";
+      } else {
+        document.getElementById("gameAPanel").style.display = "none";
+        document.getElementById("gameBPanel").style.display = "block";
+        document.getElementById("tabGameB").className = "btn btn-primary";
+        document.getElementById("tabGameA").className = "btn btn-outline";
+      }
+    }
+
+    function renderGameA() {
+      if (gameAIdx >= GAME_A_ITEMS.length) {
+        document.getElementById("gameACounter").textContent = "ROUND COMPLETE!";
+        document.getElementById("gameAEmoji").textContent = "🎉";
+        document.getElementById("gameAPrompt").textContent = `You scored ${gameASessionScore} / 10!`;
+        if (gameASessionScore > appState.m3GameAScore) {
+          appState.m3GameAScore = gameASessionScore;
+          addXP(gameASessionScore * 10, "Load Classifier Blitz High Score");
+          saveState();
+        }
+        return;
+      }
+      const item = GAME_A_ITEMS[gameAIdx];
+      document.getElementById("gameACounter").textContent = `ITEM ${gameAIdx + 1} OF ${GAME_A_ITEMS.length}`;
+      document.getElementById("gameAEmoji").textContent = item.emoji;
+      document.getElementById("gameAPrompt").textContent = item.text;
+    }
+
+    function submitGameA(choice) {
+      if (gameAIdx >= GAME_A_ITEMS.length) {
+        gameAIdx = 0;
+        gameASessionScore = 0;
+        gameAStreakCount = 0;
+        document.getElementById("gameAFeedback").style.display = "none";
+        renderGameA();
+        return;
+      }
+      const item = GAME_A_ITEMS[gameAIdx];
+      const fb = document.getElementById("gameAFeedback");
+      fb.style.display = "block";
+
+      if (choice === item.ans) {
+        gameASessionScore++;
+        gameAStreakCount++;
+        fb.style.background = "#d1fae5";
+        fb.style.color = "#065f46";
+        fb.textContent = `✅ Correct! ${item.exp}`;
+      } else {
+        gameAStreakCount = 0;
+        fb.style.background = "#ffe4e6";
+        fb.style.color = "#9f1239";
+        fb.textContent = `❌ Not quite. ${item.exp}`;
+      }
+      document.getElementById("gameAStreak").textContent = `Streak: ${gameAStreakCount} 🔥`;
+      gameAIdx++;
+      renderGameA();
+    }
+
+    const GAME_B_ITEMS = [
+      { emoji: "🧺", text: "Wringing water out of a soaked beach towel with both hands", ans: "torsion", exp: "Torsion: Your hands twist opposite ends of the towel in opposite directions." },
+      { emoji: "✂️", text: "Scissors blades slicing through a sheet of cardboard", ans: "shear", exp: "Shear: Two blades slide past each other in opposite parallel directions." },
+      { emoji: "🪢", text: "A rope stretched tight during a Grade 7 tug-of-war match", ans: "tension", exp: "Tension: Both teams pull outward, stretching the rope fibers." },
+      { emoji: "🏛️", text: "A concrete pillar holding up a heavy highway overpass", ans: "compression", exp: "Compression: The weight of the overpass squeezes the pillar downward." },
+      { emoji: "🚪", text: "Turning a stiff doorknob to unlatch a classroom door", ans: "torsion", exp: "Torsion: Rotating the knob applies a twisting force to the internal spindle." },
+      { emoji: "🥕", text: "Your front teeth biting cleanly through a crunchy raw carrot", ans: "shear", exp: "Shear: Upper and lower teeth slide past each other to slice the carrot." },
+      { emoji: "🎸", text: "Tightening a steel guitar string with a tuning peg", ans: "tension", exp: "Tension: Winding the peg pulls the string tighter." },
+      { emoji: "🛏️", text: "Foam mattress springs squishing down when you lie on your bed", ans: "compression", exp: "Compression: Your body weight presses the springs closer together." }
+    ];
+
+    let gameBIdx = 0;
+    let gameBSessionScore = 0;
+
+    function renderGameB() {
+      if (gameBIdx >= GAME_B_ITEMS.length) {
+        document.getElementById("gameBCounter").textContent = "ROUND COMPLETE!";
+        document.getElementById("gameBEmoji").textContent = "🕵️‍♂️";
+        document.getElementById("gameBPrompt").textContent = `Detective Score: ${gameBSessionScore} / 8!`;
+        if (gameBSessionScore > appState.m3GameBScore) {
+          appState.m3GameBScore = gameBSessionScore;
+          addXP(gameBSessionScore * 12, "Internal Force Detective High Score");
+          saveState();
+        }
+        return;
+      }
+      const item = GAME_B_ITEMS[gameBIdx];
+      document.getElementById("gameBCounter").textContent = `CASE ${gameBIdx + 1} OF ${GAME_B_ITEMS.length}`;
+      document.getElementById("gameBEmoji").textContent = item.emoji;
+      document.getElementById("gameBPrompt").textContent = item.text;
+    }
+
+    function submitGameB(choice) {
+      if (gameBIdx >= GAME_B_ITEMS.length) {
+        gameBIdx = 0;
+        gameBSessionScore = 0;
+        document.getElementById("gameBFeedback").style.display = "none";
+        renderGameB();
+        return;
+      }
+      const item = GAME_B_ITEMS[gameBIdx];
+      const fb = document.getElementById("gameBFeedback");
+      fb.style.display = "block";
+
+      if (choice === item.ans) {
+        gameBSessionScore++;
+        fb.style.background = "#d1fae5";
+        fb.style.color = "#065f46";
+        fb.textContent = `✅ Case Solved! ${item.exp}`;
+      } else {
+        fb.style.background = "#ffe4e6";
+        fb.style.color = "#9f1239";
+        fb.textContent = `❌ Incorrect Force. ${item.exp}`;
+      }
+      gameBIdx++;
+      renderGameB();
+    }
+
+    /* ========================================================================
+       5. MODULE 4: ENGINEERING CASE STUDIES
+       ======================================================================== */
+    const CASE_STUDIES = [
+      {
+        title: "Case Study 1: The Tacoma Narrows Bridge Collapse (1940)",
+        subtitle: "Washington State, USA • Aerodynamic Flutter & Torsion",
+        story: `When the Tacoma Narrows Suspension Bridge opened in July 1940, drivers nicknamed it "Galloping Gertie" because the roadway bounced up and down even in mild breezes. Engineers had built the bridge with solid plate girders that caught the wind like an airplane wing instead of letting wind pass through open trusses. On November 7, 1940, steady 64 km/h winds hit the bridge. Instead of just bouncing up and down, the bridge deck began violently twisting back and forth—tilting up to 45 degrees! Within hours, the steel cables snapped and the center span crashed into the water below.`,
+        svg: `<svg viewBox="0 0 340 200" style="width:100%;background:#081226;border-radius:12px;padding:10px;">
+          <rect x="65" y="30" width="14" height="150" fill="#64748b"/>
+          <rect x="261" y="30" width="14" height="150" fill="#64748b"/>
+          <path d="M 20 110 Q 170 65 320 135" stroke="#f97316" stroke-width="6" fill="none"/>
+          <path d="M 20 125 Q 170 155 320 105" stroke="#38bdf8" stroke-width="4" fill="none"/>
+          <text x="170" y="185" fill="#c084fc" font-size="11" text-anchor="middle" font-family="monospace">VIOLENT WIND-INDUCED TORSION (TWISTING)</text>
+        </svg>`,
+        questions: [
+          {
+            q: "1. What type of load triggered the Tacoma Narrows Bridge disaster?",
+            opts: ["Live Load from heavy traffic jams", "Environmental Load from steady wind gusts", "Dead Load from wet snow"],
+            ans: 1
+          },
+          {
+            q: "2. Which destructive internal force twisted the bridge deck side-to-side until it snapped?",
+            opts: ["Compression", "Torsion", "Gravity"],
+            ans: 1
+          },
+          {
+            q: "3. How did engineers redesign the replacement bridge so it wouldn't fail the same way?",
+            opts: ["Used open steel trusses so wind could pass right through", "Made the road out of solid concrete blocks", "Banned all cars from driving on windy days"],
+            ans: 0
+          }
+        ]
+      },
+      {
+        title: "Case Study 2: The Citigroup Center Secret Crisis (1978)",
+        subtitle: "New York City • Quartering Winds & Shear Bolts",
+        story: `The 59-storey Citigroup Center in Manhattan had a unique design: four massive stilts placed at the center of each wall instead of at the corners. In 1978, an engineering student asked a critical question about how the skyscraper would handle "quartering winds" (winds hitting two sides of the building at a 45-degree angle). Structural engineer William LeMessurier recalculated the forces and discovered a terrifying flaw: builders had swapped strong welded joints for weaker bolted joints inside the diagonal wind braces. A severe hurricane could cause the bolts to slice apart under extreme Shear forces! Construction crews worked secretly every night for three months welding heavy steel plates over the bolts just before Hurricane Ella arrived.`,
+        svg: `<svg viewBox="0 0 340 200" style="width:100%;background:#081226;border-radius:12px;padding:10px;">
+          <rect x="125" y="25" width="90" height="115" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+          <line x1="125" y1="55" x2="215" y2="95" stroke="#facc15" stroke-width="3"/>
+          <line x1="215" y1="55" x2="125" y2="95" stroke="#facc15" stroke-width="3"/>
+          <rect x="160" y="140" width="20" height="45" fill="#64748b"/>
+          <line x1="40" y1="45" x2="112" y2="75" stroke="#f97316" stroke-width="4"/>
+          <polygon points="120,78 106,79 112,67" fill="#f97316"/>
+          <text x="170" y="195" fill="#facc15" font-size="11" text-anchor="middle" font-family="monospace">BOLTED JOINTS AT RISK OF SHEAR FAILURE</text>
+        </svg>`,
+        questions: [
+          {
+            q: "1. What internal force threatened to slice through the bolted wind-brace joints?",
+            opts: ["Shear", "Tension", "Magnetism"],
+            ans: 0
+          },
+          {
+            q: "2. Why were 'quartering winds' (hitting at a 45° angle) so dangerous to this tower?",
+            opts: ["They doubled the Dead Load of the elevators", "They changed the Plane of Application, hitting two sides at once", "They melted the steel frame"],
+            ans: 1
+          },
+          {
+            q: "3. How did engineers reinforce the structure in time?",
+            opts: ["Welded heavy steel plates over every bolted joint", "Removed the top 20 floors", "Filled the basement with water"],
+            ans: 0
+          }
+        ]
+      },
+      {
+        title: "Case Study 3: The CN Tower Engineering Triumph (Toronto, Canada)",
+        subtitle: "Toronto, Ontario • Balancing Dead Load, Compression & Wind",
+        story: `Standing 553.3 metres tall in downtown Toronto, the CN Tower was built to broadcast radio and TV signals high above city skyscrapers. How do engineers keep a slender concrete tower from tipping over or crushing itself? First, its Y-shaped tripod base tapers inward as it rises, channeling the enormous Dead Load of 117,910 metric tonnes of concrete safely down into deep bedrock through massive Compression. Second, tensioned steel cables run inside the concrete to prevent Tension cracks when high-altitude winds bend the tower. At the top, a giant tuned mass damper swings opposite to the wind to reduce swaying during Lake Ontario storms!`,
+        svg: `<svg viewBox="0 0 340 200" style="width:100%;background:#081226;border-radius:12px;padding:10px;">
+          <polygon points="145,180 165,55 175,55 195,180" fill="#64748b" stroke="#cbd5e1" stroke-width="2"/>
+          <ellipse cx="170" cy="68" rx="28" ry="9" fill="#0284c7" stroke="#38bdf8" stroke-width="2"/>
+          <line x1="170" y1="15" x2="170" y2="55" stroke="#f8fafc" stroke-width="3"/>
+          <line x1="152" y1="115" x2="144" y2="165" stroke="#f97316" stroke-width="3"/>
+          <polygon points="143,172 140,161 150,163" fill="#f97316"/>
+          <line x1="188" y1="115" x2="196" y2="165" stroke="#f97316" stroke-width="3"/>
+          <polygon points="197,172 190,163 200,161" fill="#f97316"/>
+          <text x="170" y="195" fill="#38bdf8" font-size="11" text-anchor="middle" font-family="monospace">TAPERED LEGS CHANNEL COMPRESSION TO BEDROCK</text>
+        </svg>`,
+        questions: [
+          {
+            q: "1. What is the 117,910-tonne concrete structure of the CN Tower itself classified as?",
+            opts: ["Live Load", "Dead Load", "Environmental Load"],
+            ans: 1
+          },
+          {
+            q: "2. Which internal force is strongest in the tapered concrete legs pressing down onto the bedrock?",
+            opts: ["Compression", "Torsion", "Shear"],
+            ans: 0
+          },
+          {
+            q: "3. Why did engineers embed stretched steel cables inside the CN Tower's concrete?",
+            opts: ["To resist Tension on the windward side when the tower bends", "To make the tower lighter than air", "To conduct lightning into the SkyPod"],
+            ans: 0
+          }
+        ]
+      }
+    ];
+
+    let activeCaseIdx = 0;
+    let caseAnswers = [
+      [null, null, null],
+      [null, null, null],
+      [null, null, null]
+    ];
+
+    function selectCaseStudy(idx) {
+      if (idx > 0 && !appState.m4CasesCompleted[idx - 1]) {
+        showToast("Complete the previous Case Study questions first to unlock this file!", "#f59e0b");
+        return;
+      }
+      activeCaseIdx = idx;
+      renderCaseStudy();
+    }
+
+    function renderCaseStudy() {
+      for (let i = 0; i < 3; i++) {
+        const tab = document.getElementById(`caseTab-${i}`);
+        tab.classList.remove("active", "locked");
+        if (i === activeCaseIdx) tab.classList.add("active");
+        const unlocked = i === 0 || appState.m4CasesCompleted[i - 1];
+        if (!unlocked) tab.classList.add("locked");
+        const prefix = appState.m4CasesCompleted[i] ? "✅ " : unlocked ? "📂 " : "🔒 ";
+        const names = ["Case 1: Tacoma Narrows (1940)", "Case 2: Citigroup Center (1978)", "Case 3: The CN Tower (Toronto)"];
+        tab.textContent = prefix + names[i];
+      }
+
+      const cs = CASE_STUDIES[activeCaseIdx];
+      let qHtml = "";
+      cs.questions.forEach((item, qIdx) => {
+        const chosen = caseAnswers[activeCaseIdx][qIdx];
+        qHtml += `<div style="margin-top:14px;padding:14px;background:var(--paper-bg);border-radius:10px;border:1px solid var(--slate-200);">
+          <p style="font-weight:700;font-size:0.92rem;margin-bottom:8px;">${item.q}</p>
+          <div class="qc-options">
+            ${item.opts.map((opt, oIdx) => {
+              let cls = "qc-btn";
+              if (chosen === oIdx) {
+                cls += oIdx === item.ans ? " correct" : " wrong";
+              }
+              return `<button class="${cls}" onclick="answerCaseQ(${activeCaseIdx}, ${qIdx}, ${oIdx})">${opt}</button>`;
+            }).join("")}
+          </div>
+        </div>`;
+      });
+
+      document.getElementById("caseStudyBody").innerHTML = `
+        <span class="tag-pill" style="background:var(--orange-100);color:var(--orange-600);">${cs.subtitle}</span>
+        <h3 style="font-size:1.3rem;margin-bottom:12px;">${cs.title}</h3>
+        <div class="case-hero">
+          <p style="font-size:0.95rem;color:var(--navy-800);line-height:1.7;">${cs.story}</p>
+          <div>${cs.svg}</div>
+        </div>
+        <h4 style="color:var(--cyan-600);margin-top:10px;">🔍 Forensic Analysis Questions (Solve all 3 to complete case):</h4>
+        ${qHtml}
+      `;
+    }
+
+    function answerCaseQ(cIdx, qIdx, oIdx) {
+      caseAnswers[cIdx][qIdx] = oIdx;
+      const cs = CASE_STUDIES[cIdx];
+      const allCorrect = cs.questions.every((q, idx) => caseAnswers[cIdx][idx] === q.ans);
+
+      if (allCorrect && !appState.m4CasesCompleted[cIdx]) {
+        appState.m4CasesCompleted[cIdx] = true;
+        addXP(60, `Case Study ${cIdx + 1} Solved`);
+        saveState();
+      }
+      renderCaseStudy();
+    }
+
+    /* ========================================================================
+       6. MODULE 5: INTERACTIVE CROSSWORD PUZZLE & ENGINEER'S REPORT
+       ======================================================================== */
+    // 12x12 Grid Words
+    const CW_WORDS = [
+      { num: 1, dir: "across", r: 1, c: 1, word: "COMPRESSION", clue: "1 Across: Internal pushing or squeezing force (11)" },
+      { num: 2, dir: "down", r: 1, c: 3, word: "MAGNITUDE", clue: "2 Down: The size or strength of a force in Newtons (9)" },
+      { num: 3, dir: "across", r: 4, c: 2, word: "TENSION", clue: "3 Across: Internal pulling or stretching force (7)" },
+      { num: 4, dir: "down", r: 3, c: 7, word: "TORSION", clue: "4 Down: Internal twisting force (7)" },
+      { num: 5, dir: "across", r: 7, c: 1, word: "GRAVITY", clue: "5 Across: Downward non-contact force pulling toward Earth (7)" },
+      { num: 6, dir: "down", r: 5, c: 10, word: "SHEAR", clue: "6 Down: Internal force where parallel layers slide apart (5)" },
+      { num: 7, dir: "across", r: 9, c: 5, word: "DEADLOAD", clue: "7 Across: Permanent weight of the structure itself (2 words, 8)" },
+      { num: 8, dir: "across", r: 11, c: 2, word: "LIVELOAD", clue: "8 Across: Moving or changing weight like people and cars (2 words, 8)" }
+    ];
+
+    const CW_SIZE = 12;
+    let cwGridMap = Array.from({ length: CW_SIZE }, () => Array(CW_SIZE).fill(null));
+    let selectedWordObj = CW_WORDS[0];
+
+    function initCrossword() {
+      CW_WORDS.forEach(w => {
+        for (let i = 0; i < w.word.length; i++) {
+          const rr = w.dir === "across" ? w.r : w.r + i;
+          const cc = w.dir === "across" ? w.c + i : w.c;
+          if (!cwGridMap[rr][cc]) {
+            cwGridMap[rr][cc] = { letter: w.word[i], nums: [], words: [] };
+          }
+          if (i === 0) cwGridMap[rr][cc].nums.push(w.num);
+          cwGridMap[rr][cc].words.push(w);
+        }
+      });
+
+      const gridEl = document.getElementById("crosswordGrid");
+      gridEl.innerHTML = "";
+      for (let r = 0; r < CW_SIZE; r++) {
+        for (let c = 0; c < CW_SIZE; c++) {
+          const cellDiv = document.createElement("div");
+          cellDiv.className = "cw-cell";
+          const data = cwGridMap[r][c];
+          if (data) {
+            cellDiv.classList.add("active-cell");
+            cellDiv.dataset.r = r;
+            cellDiv.dataset.c = c;
+            if (data.nums.length > 0) {
+              const numSpan = document.createElement("span");
+              numSpan.className = "cw-num";
+              numSpan.textContent = data.nums[0];
+              cellDiv.appendChild(numSpan);
+            }
+            const inp = document.createElement("input");
+            inp.type = "text";
+            inp.maxLength = 1;
+            inp.className = "cw-input";
+            inp.id = `cw-${r}-${c}`;
+            inp.addEventListener("focus", () => highlightWordFromCell(r, c));
+            inp.addEventListener("input", (e) => handleCwInput(e, r, c));
+            inp.addEventListener("keydown", (e) => handleCwKeydown(e, r, c));
+            cellDiv.appendChild(inp);
+          }
+          gridEl.appendChild(cellDiv);
+        }
+      }
+
+      const acrossList = document.getElementById("acrossClues");
+      const downList = document.getElementById("downClues");
+      acrossList.innerHTML = "";
+      downList.innerHTML = "";
+
+      CW_WORDS.forEach(w => {
+        const li = document.createElement("li");
+        li.textContent = w.clue;
+        li.id = `clue-${w.num}-${w.dir}`;
+        li.onclick = () => {
+          selectedWordObj = w;
+          highlightSelectedWord();
+          document.getElementById(`cw-${w.r}-${w.c}`).focus();
+        };
+        if (w.dir === "across") acrossList.appendChild(li);
+        else downList.appendChild(li);
+      });
+
+      highlightSelectedWord();
+    }
+
+    function highlightWordFromCell(r, c) {
+      const cellData = cwGridMap[r][c];
+      if (!cellData) return;
+      if (!cellData.words.includes(selectedWordObj)) {
+        selectedWordObj = cellData.words[0];
+      }
+      highlightSelectedWord();
+    }
+
+    function highlightSelectedWord() {
+      document.querySelectorAll(".cw-cell").forEach(el => el.classList.remove("highlighted"));
+      document.querySelectorAll(".clue-list li").forEach(el => el.classList.remove("selected-clue"));
+
+      const w = selectedWordObj;
+      if (!w) return;
+      for (let i = 0; i < w.word.length; i++) {
+        const rr = w.dir === "across" ? w.r : w.r + i;
+        const cc = w.dir === "across" ? w.c + i : w.c;
+        const inp = document.getElementById(`cw-${rr}-${cc}`);
+        if (inp) inp.parentElement.classList.add("highlighted");
+      }
+      const clueEl = document.getElementById(`clue-${w.num}-${w.dir}`);
+      if (clueEl) clueEl.classList.add("selected-clue");
+    }
+
+    function handleCwInput(e, r, c) {
+      const val = e.target.value.toUpperCase().replace(/[^A-Z]/g, "");
+      e.target.value = val;
+      e.target.classList.remove("correct-letter", "wrong-letter");
+      if (val && selectedWordObj) {
+        const nextR = selectedWordObj.dir === "across" ? r : r + 1;
+        const nextC = selectedWordObj.dir === "across" ? c + 1 : c;
+        const nextInp = document.getElementById(`cw-${nextR}-${nextC}`);
+        if (nextInp) nextInp.focus();
+      }
+    }
+
+    function handleCwKeydown(e, r, c) {
+      if (e.key === "Backspace" && !e.target.value && selectedWordObj) {
+        const prevR = selectedWordObj.dir === "across" ? r : r - 1;
+        const prevC = selectedWordObj.dir === "across" ? c - 1 : c;
+        const prevInp = document.getElementById(`cw-${prevR}-${prevC}`);
+        if (prevInp) prevInp.focus();
+      }
+    }
+
+    function hintCrosswordLetter() {
+      const w = selectedWordObj || CW_WORDS[0];
+      for (let i = 0; i < w.word.length; i++) {
+        const rr = w.dir === "across" ? w.r : w.r + i;
+        const cc = w.dir === "across" ? w.c + i : w.c;
+        const inp = document.getElementById(`cw-${rr}-${cc}`);
+        if (inp && inp.value.toUpperCase() !== w.word[i]) {
+          inp.value = w.word[i];
+          inp.classList.add("correct-letter");
+          showToast(`Revealed letter '${w.word[i]}' in ${w.num} ${w.dir}!`, "#0284c7");
+          return;
+        }
+      }
+      showToast("All letters in this word are already filled!", "#10b981");
+    }
+
+    function checkCrossword() {
+      let totalLetters = 0;
+      let correctLetters = 0;
+
+      for (let r = 0; r < CW_SIZE; r++) {
+        for (let c = 0; c < CW_SIZE; c++) {
+          const data = cwGridMap[r][c];
+          if (data) {
+            totalLetters++;
+            const inp = document.getElementById(`cw-${r}-${c}`);
+            const typed = inp.value.toUpperCase();
+            inp.classList.remove("correct-letter", "wrong-letter");
+            if (typed === data.letter) {
+              correctLetters++;
+              inp.classList.add("correct-letter");
+            } else if (typed !== "") {
+              inp.classList.add("wrong-letter");
+            }
+          }
+        }
+      }
+
+      const fb = document.getElementById("cwFeedback");
+      if (correctLetters === totalLetters) {
+        fb.style.color = "#059669";
+        fb.textContent = `🎉 100% Complete! All ${totalLetters} letters verified!`;
+        if (!appState.m5CrosswordDone) {
+          appState.m5CrosswordDone = true;
+          addXP(80, "Engineering Crossword Solved");
+          saveState();
+        }
+      } else {
+        fb.style.color = "#d97706";
+        fb.textContent = `Progress: ${correctLetters} / ${totalLetters} letters correct. Red letters need fixing!`;
+      }
+    }
+
+    function checkEngineerReport() {
+      const expected = ["dead load", "live load", "environmental loads", "tension", "compression", "shear"];
+      let score = 0;
+      expected.forEach((ans, idx) => {
+        const sel = document.getElementById(`rep-${idx}`);
+        if (sel.value === ans) {
+          score++;
+          sel.style.borderColor = "#059669";
+          sel.style.background = "#d1fae5";
+        } else {
+          sel.style.borderColor = "#e11d48";
+          sel.style.background = "#ffe4e6";
+        }
+      });
+
+      const fb = document.getElementById("reportFeedback");
+      if (score === expected.length) {
+        fb.style.color = "#059669";
+        fb.textContent = "✅ Report Approved! All 6 terms are scientifically accurate.";
+        if (!appState.m5ReportDone) {
+          appState.m5ReportDone = true;
+          addXP(60, "Chief Engineer's Report Completed");
+          saveState();
+        }
+      } else {
+        fb.style.color = "#e11d48";
+        fb.textContent = `${score} / 6 correct. Review the red dropdown boxes and submit again.`;
+      }
+    }
+
+    /* ========================================================================
+       7. MODULE 6: FINAL CERTIFICATION EXAM & CERTIFICATE GENERATOR
+       ======================================================================== */
+    const FINAL_EXAM_QUESTIONS = [
+      {
+        q: "1. Which term describes the size or strength of an external force measured in Newtons (N)?",
+        opts: ["Plane of application", "Magnitude", "Centre of gravity", "Torsion"],
+        ans: 1
+      },
+      {
+        q: "2. A delivery truck parked on a bridge is an example of what type of load?",
+        opts: ["Dead Load", "Environmental Load", "Live Load", "Static Dead Force"],
+        ans: 2
+      },
+      {
+        q: "3. Which of the following is a Dead Load on a school building?",
+        opts: ["Students walking down the hallway", "Heavy winter snow on the roof", "Concrete foundation walls and steel roof trusses", "A gust of wind hitting the gymnasium"],
+        ans: 2
+      },
+      {
+        q: "4. When you stretch a rubber band between your fingers, what internal force is acting inside the rubber?",
+        opts: ["Compression", "Tension", "Shear", "Torsion"],
+        ans: 1
+      },
+      {
+        q: "5. What internal force occurs when two parallel forces act in opposite directions, such as scissors cutting paper?",
+        opts: ["Shear", "Compression", "Gravity", "Tension"],
+        ans: 0
+      },
+      {
+        q: "6. During the 1940 Tacoma Narrows Bridge collapse, strong winds caused the roadway to twist violently until failure. What internal force destroyed the bridge?",
+        opts: ["Compression", "Torsion", "Gravity", "Buoyancy"],
+        ans: 1
+      },
+      {
+        q: "7. Why is a tall filing cabinet easier to tip over if you push near the top instead of near the bottom?",
+        opts: ["Changing the point of application increases tipping leverage", "Gravity disappears near the top", "The dead load decreases at the top", "The direction of the push becomes vertical"],
+        ans: 0
+      },
+      {
+        q: "8. When a heavy load bends a horizontal wooden beam downward in the middle, what happens to the top and bottom surfaces?",
+        opts: ["Top is in Tension; bottom is in Compression", "Top is in Compression; bottom is in Tension", "Both top and bottom are in Torsion", "Neither surface experiences internal forces"],
+        ans: 1
+      },
+      {
+        q: "9. Free-falling rain, sleet, and high winds pushing against a skyscraper are classified as:",
+        opts: ["Dead Loads", "Live Loads", "Environmental Loads", "Internal Shear Loads"],
+        ans: 2
+      },
+      {
+        q: "10. How does the CN Tower safely transfer its massive 117,910-tonne Dead Load into the ground?",
+        opts: ["Through hollow plastic tubes", "Through tapered concrete legs under Compression resting on bedrock", "By floating on Lake Ontario water", "By using torsion springs at the top"],
+        ans: 1
+      }
+    ];
+
+    let examUserChoices = Array(FINAL_EXAM_QUESTIONS.length).fill(null);
+
+    function renderFinalExam() {
+      const container = document.getElementById("examQuestionsList");
+      container.innerHTML = FINAL_EXAM_QUESTIONS.map((item, qIdx) => `
+        <div style="margin-bottom:16px;padding:14px;background:var(--paper-bg);border-radius:10px;border:1px solid var(--slate-200);">
+          <p style="font-weight:700;font-size:0.95rem;margin-bottom:8px;">${item.q}</p>
+          <div class="qc-options">
+            ${item.opts.map((opt, oIdx) => `
+              <button class="qc-btn ${examUserChoices[qIdx] === oIdx ? 'active-choice' : ''}"
+                id="exam-q${qIdx}-o${oIdx}"
+                style="${examUserChoices[qIdx] === oIdx ? 'border-color:var(--navy-900);background:var(--cyan-100);' : ''}"
+                onclick="selectExamChoice(${qIdx}, ${oIdx})">${opt}</button>
+            `).join("")}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function selectExamChoice(qIdx, oIdx) {
+      examUserChoices[qIdx] = oIdx;
+      renderFinalExam();
+    }
+
+    function saveStudentName(val) {
+      appState.studentName = val;
+      saveState();
+      if (document.getElementById("certificateWrapper").style.display === "block") {
+        document.getElementById("certDisplayName").textContent = val.trim() || "Junior Structural Engineer";
+      }
+    }
+
+    function gradeFinalExam() {
+      if (examUserChoices.includes(null)) {
+        showToast("Please answer all 10 questions before submitting the exam!", "#f59e0b");
+        return;
+      }
+
+      let score = 0;
+      FINAL_EXAM_QUESTIONS.forEach((item, qIdx) => {
+        const chosen = examUserChoices[qIdx];
+        item.opts.forEach((_, oIdx) => {
+          const btn = document.getElementById(`exam-q${qIdx}-o${oIdx}`);
+          btn.style.background = "";
+          btn.style.borderColor = "";
+          if (oIdx === item.ans) btn.classList.add("correct");
+          else if (oIdx === chosen && chosen !== item.ans) btn.classList.add("wrong");
+        });
+        if (chosen === item.ans) score++;
+      });
+
+      const fb = document.getElementById("examFeedback");
+      if (appState.m6ExamBest === null || score > appState.m6ExamBest) {
+        const diff = appState.m6ExamBest === null ? score : score - appState.m6ExamBest;
+        appState.m6ExamBest = score;
+        if (diff > 0) addXP(diff * 15, "Certification Exam Points");
+        saveState();
+      }
+
+      if (score >= 7) {
+        fb.style.color = "#059669";
+        fb.textContent = `🏆 Congratulations! You scored ${score}/10 (${score * 10}%) and earned your Structural Engineer Certification!`;
+        showCertificate(score);
+      } else {
+        fb.style.color = "#e11d48";
+        fb.textContent = `You scored ${score}/10 (${score * 10}%). Review the highlighted answers above and try again to reach 70%!`;
+      }
+    }
+
+    function showCertificate(score) {
+      const wrap = document.getElementById("certificateWrapper");
+      wrap.style.display = "block";
+      const nameInput = document.getElementById("studentNameInput").value.trim();
+      document.getElementById("certDisplayName").textContent = nameInput || appState.studentName || "Junior Structural Engineer";
+      document.getElementById("certXp").textContent = appState.xp;
+      document.getElementById("certExamScore").textContent = `${score} / 10 (${score * 10}%)`;
+
+      const mins = String(Math.floor(appState.secondsElapsed / 60)).padStart(2, "0");
+      const secs = String(appState.secondsElapsed % 60).padStart(2, "0");
+      document.getElementById("certTime").textContent = `${mins}m ${secs}s`;
+      document.getElementById("certDate").textContent = new Date().toLocaleDateString("en-CA", {
+        year: "numeric", month: "long", day: "numeric"
+      });
+      wrap.scrollIntoView({ behavior: "smooth" });
+    }
+
+    /* ========================================================================
+       8. INITIALIZATION ON WINDOW LOAD
+       ======================================================================== */
+    window.onload = function () {
+      // Load initial Module 1 SVGs
+      document.getElementById("svgExtContainer").innerHTML = SVG_LIBRARY.ext.gravity.svg;
+      document.getElementById("svgLoadContainer").innerHTML = SVG_LIBRARY.load.dead.svg;
+      document.getElementById("svgIntContainer").innerHTML = SVG_LIBRARY.int.tension.svg;
+
+      // Restore Quick Check highlights if saved
+      for (let i = 1; i <= 3; i++) {
+        if (appState.m1QuickChecks[i]) {
+          document.getElementById(`qc-fb-${i}`).style.color = "#059669";
+          document.getElementById(`qc-fb-${i}`).textContent = "✅ Completed!";
+        }
+      }
+
+      // Initialize Module 2 Simulator
+      resizeCanvas();
+      updateSimParams();
+      renderChallengesUI();
+      requestAnimationFrame(renderBridgeCanvas);
+
+      // Initialize Module 3 Arcade
+      renderGameA();
+      renderGameB();
+
+      // Initialize Module 4 Case Studies
+      renderCaseStudy();
+
+      // Initialize Module 5 Crossword
+      initCrossword();
+
+      // Initialize Module 6 Exam
+      if (appState.studentName) {
+        document.getElementById("studentNameInput").value = appState.studentName;
+      }
+      renderFinalExam();
+      if (appState.m6ExamBest !== null && appState.m6ExamBest >= 7) {
+        showCertificate(appState.m6ExamBest);
+      }
+
+      updateHUD();
+    };
+
+    window.addEventListener("resize", () => {
+      if (document.getElementById("module-2").classList.contains("active")) {
+        resizeCanvas();
+      }
+    });
+  </script>
+</body>
+</html>
